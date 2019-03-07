@@ -9,7 +9,9 @@ jobs:
       pwd
       ls
       uname -a
-      lld -v
+      echo $PATH
+      echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
+      echo $PATH
       cargo check --all 
     displayName: Check source
 
