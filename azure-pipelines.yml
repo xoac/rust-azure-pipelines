@@ -1,0 +1,40 @@
+trigger: ["master"]
+pr: ["master"]
+
+jobs:
+# Check formatting
+- template: ci/azure-rustfmt.yml
+  parameters:
+    name: rustfmt
+
+# Run tests
+- template: ci/azure-test-stable.yml
+  parameters:
+    name: cargo_test
+    displayName: Cargo test
+    cross: true
+
+# Check clippy
+- template: ci/azure-cargo-clippy.yml
+  parameters:
+    name: clippy
+    displayName: Check agains clippy
+    rust: stable
+
+# Try cross compiling
+- template: ci/azure-cross-docker.yml
+  parameters:
+    name: cross_arm
+    container: messense/rust-musl-cross:armv7-musleabihf
+
+# This represents the minimum Rust version supported by
+# Tokio. Updating this should be done in a dedicated PR and
+# cannot be greater than two 0.x releases prior to the
+# current stable.
+#
+# Tests are not run as tests may require newer versions of
+# rust.
+- template: ci/azure-check-minrust.yml
+  parameters:
+    name: minrust
+    rust_version: 1.31.0
