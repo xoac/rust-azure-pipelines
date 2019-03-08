@@ -24,15 +24,15 @@ jobs:
       ls -la
       git init
       git config user.name 'Deployment Bot (from Azure Pipelines)'
-      git config user.email 'deploy@tokio-rs.com'
+      git config user.email 'deploy@example.com'
       git config --global credential.helper 'store --file ~/.my-credentials'
-      printf "protocol=https\nhost=github.com\nusername=carllerche\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
-      git remote add origin https://github.com/tokio-rs/tokio
+      printf "protocol=https\nhost=github.com\nusername=xoac\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
+      git remote add origin https://github.com/xoac/rust-azure-pipelines/
       git checkout -b gh-pages
       git add .
-      git commit -m 'Deploy Tokio API documentation'
+      git commit -m 'Deploy API documentation'
       git push -f origin gh-pages
     env:
-      GITHUB_TOKEN: $(githubPersonalToken)
+      GITHUB_TOKEN: $(DocPublishToken)
     workingDirectory: '$(Build.BinariesDirectory)'
     displayName: 'Deploy Documentation'

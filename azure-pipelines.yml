@@ -41,3 +41,11 @@ jobs:
   parameters:
     name: minrust
     rust_version: 1.31.0 # The 2018 edition
+
+# Deploy doc
+- template: ci/WIP/deploy-docs.yml@templates
+  parameters:
+    dependsOn:
+      - rustfmt
+      - cargo_test
+      - cargo_check
