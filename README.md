@@ -34,6 +34,9 @@ This is useful if u want to have a seperate documentaion for master branch. Ever
 ![](img/doc_deploy3.png)  
 4. Edit azure-pipelines.yml section with doc deploy (parameters.git) and you are done.
 
+Example master doc.
+[master doc for this hello word app](https://xoac.github.io/rust-azure-pipelines/doc/rust_azure_pipelines/)
+
 ----
 
 ### Sources:
