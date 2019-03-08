@@ -33,6 +33,6 @@ jobs:
       git commit -m 'Deploy API documentation'
       git push -f origin gh-pages
     env:
-      GITHUB_TOKEN: $(github.DocPublishToken)
+      GITHUB_TOKEN: $(DocPublishToken)
     workingDirectory: '$(Build.BinariesDirectory)'
     displayName: 'Deploy Documentation'
