@@ -1,28 +1,35 @@
 trigger: ["master"]
 pr: ["master"]
 
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: xoac/rust-azure-pipelines
+      endpoint: PiplinesTemplate
+
 jobs:
 # Check formatting
-- template: ci/azure-rustfmt.yml
+- template: ci/azure-rustfmt.yml@templates
   parameters:
     name: rustfmt
 
-# Run tests
-- template: ci/azure-test-stable.yml
+# Test top level crate
+- template: ci/azure-test-stable.yml@templates
   parameters:
-    name: cargo_test
-    displayName: Cargo test
+    name: test_tokio
+    displayName: Test tokio
     cross: true
 
-# Check clippy
-- template: ci/azure-cargo-clippy.yml
+- template: ci/azure-cargo-check.yml@templates
   parameters:
-    name: clippy
-    displayName: Check agains clippy
+    name: features
+    displayName: Check feature permtuations
     rust: stable
 
+
 # Try cross compiling
-- template: ci/azure-cross-docker.yml
+- template: ci/azure-cross-docker.yml@templates
   parameters:
     name: cross_arm
     container: messense/rust-musl-cross:armv7-musleabihf
@@ -34,7 +41,7 @@ jobs:
 #
 # Tests are not run as tests may require newer versions of
 # rust.
-- template: ci/azure-check-minrust.yml
+- template: ci/azure-check-minrust.yml@templates
   parameters:
     name: minrust
     rust_version: 1.31.0
