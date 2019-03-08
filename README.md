@@ -26,14 +26,13 @@ This is useful if u want to have a seperate documentaion for master branch. Ever
 
 ### Azure part
 
-Go to your azure dev-ops pipline project and click edit.
-![](img/doc_deploy1.png)
-Go inside variables:
-![](img/doc_deploy2.png)
-And add variable caled `DocPublishToken` with value of your PAT. Don't forget to mark it as seecret.
-![](img/doc_deploy3.png)
-
-Then edit azure-pipelines.yml section with doc deploy (parameters.git) and you are done.
+1. Go to your azure dev-ops pipline project and click edit.  
+![](img/doc_deploy1.png)  
+2. Go inside variables:  
+![](img/doc_deploy2.png)  
+3. And add variable caled `DocPublishToken` with value of your PAT. Don't forget to mark it as seecret.  
+![](img/doc_deploy3.png)  
+4. Edit azure-pipelines.yml section with doc deploy (parameters.git) and you are done.
 
 ----
 
