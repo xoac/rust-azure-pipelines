@@ -49,3 +49,7 @@ jobs:
       - rustfmt
       - cargo_test
       - cargo_check
+    git:
+     user: xoac
+     email: deploy@example.com
+     repo: https://github.com/xoac/rust-azure-pipelines/
