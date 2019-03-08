@@ -18,21 +18,21 @@ jobs:
 # Test crate
 - template: ci/test-stable.yml@templates
   parameters:
-    name: test_tokio
-    displayName: Test tokio
+    name: cargo_test
+    displayName: Test cargo
     cross: true # Test on Windows and macOS
 
 # Cargo check
 - template: ci/cargo-check.yml@templates
   parameters:
-    name: check
+    name: cargo_check
     displayName: Cargo check
     rust: stable
 
 # Try cross compiling
 - template: ci/cargo-check-docker.yml@templates
   parameters:
-    name: Cross armv7
+    name: cross_arm:
     container: messense/rust-musl-cross:armv7-musleabihf
 
 # This represents the minimum Rust version supported.
