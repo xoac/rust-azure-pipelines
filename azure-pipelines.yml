@@ -10,11 +10,6 @@ resources:
 
 
 jobs:
-- script: |
-        echo $(github.test)
-        echo $(github.test2)
-        echo $(test)
-        echo $(test2)
 # Check formatting
 - template: ci/rustfmt.yml@templates
   parameters:
