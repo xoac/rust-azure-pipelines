@@ -32,7 +32,7 @@ jobs:
 # Try cross compiling
 - template: ci/cargo-check-docker.yml@templates
   parameters:
-    name: cross_arm:
+    name: cross_arm
     container: messense/rust-musl-cross:armv7-musleabihf
 
 # This represents the minimum Rust version supported.
