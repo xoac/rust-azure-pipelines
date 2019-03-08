@@ -15,7 +15,7 @@ jobs:
     vmImage: $(vmImage)
 
   steps:
-  - template: azure-install-rust.yml
+  - template: install-rust.yml
     parameters:
       rust_version: stable
 
