@@ -19,6 +19,7 @@ resources:
 2. Specify [service connection](https://docs.microsoft.com/pl-pl/azure/devops/pipelines/library/service-endpoints?view=azure-devops)
 ![](allow_templates.png)
 
+## How to deploy doc to github pages? 
 
 ## Sources:
 * [Azure Pipelines for Rust Projects](https://nbsoftsolutions.com/blog/azure-pipelines-for-rust-projects)

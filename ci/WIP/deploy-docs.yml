@@ -18,21 +18,21 @@ jobs:
       cp -R target/doc '$(Build.BinariesDirectory)'
     displayName: 'Generate Documentation'
   - script: |
-      set -e
 
       git --version
       ls -la
       git init
       git config user.name 'Deployment Bot (from Azure Pipelines)'
-      git config user.email 'deploy@example.com'
+      git config user.email '${{ parameters.git.email }}'
       git config --global credential.helper 'store --file ~/.my-credentials'
-      printf "protocol=https\nhost=github.com\nusername=xoac\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
-      git remote add origin https://github.com/xoac/rust-azure-pipelines/
+      printf "protocol=https\nhost=github.com\nusername=$USER\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
+      git remote add origin ${{ parameters.git.repo }}
       git checkout -b gh-pages
       git add .
       git commit -m 'Deploy API documentation'
       git push -f origin gh-pages
     env:
       GITHUB_TOKEN: $(DocPublishToken)
+      USER: ${{ parameters.git.user }}
     workingDirectory: '$(Build.BinariesDirectory)'
     displayName: 'Deploy Documentation'
