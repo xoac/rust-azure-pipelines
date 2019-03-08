@@ -43,7 +43,8 @@ jobs:
     rust_version: 1.31.0 # The 2018 edition
 
 # Deploy doc
-- template: ci/WIP/deploy-docs.yml@templates
+# TODO you need to modify git parameters and specify variable in pipelin. See README.md
+- template: ci/deploy-docs.yml@templates
   parameters:
     dependsOn:
       - rustfmt

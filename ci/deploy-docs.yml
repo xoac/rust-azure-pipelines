@@ -18,6 +18,7 @@ jobs:
       cp -R target/doc '$(Build.BinariesDirectory)'
     displayName: 'Generate Documentation'
   - script: |
+      set -e
 
       git --version
       ls -la
