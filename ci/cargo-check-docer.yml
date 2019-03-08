@@ -6,14 +6,6 @@ jobs:
   container: ${{ parameters.container }}
   steps:
   - script: |
-      pwd
-      ls
-      uname -a
-      echo $PATH
-      echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
-      echo $PATH
-      ls /usr/bin/
-      ls /root/.cargo/bin/
       cargo check --all 
     displayName: Check source
 

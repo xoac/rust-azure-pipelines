@@ -8,40 +8,36 @@ resources:
       name: xoac/rust-azure-pipelines
       endpoint: PiplinesTemplate
 
+
 jobs:
 # Check formatting
-- template: ci/azure-rustfmt.yml@templates
+- template: ci/rustfmt.yml@templates
   parameters:
     name: rustfmt
 
-# Test top level crate
-- template: ci/azure-test-stable.yml@templates
+# Test crate
+- template: ci/test-stable.yml@templates
   parameters:
     name: test_tokio
     displayName: Test tokio
-    cross: true
+    cross: true # Test on Windows and macOS
 
-- template: ci/azure-cargo-check.yml@templates
+# Cargo check
+- template: ci/cargo-check.yml@templates
   parameters:
-    name: features
-    displayName: Check feature permtuations
+    name: check
+    displayName: Cargo check
     rust: stable
 
-
 # Try cross compiling
-- template: ci/azure-cross-docker.yml@templates
+- template: ci/cargo-check-docker.yml@templates
   parameters:
-    name: cross_arm
+    name: Cross armv7
     container: messense/rust-musl-cross:armv7-musleabihf
 
-# This represents the minimum Rust version supported by
-# Tokio. Updating this should be done in a dedicated PR and
-# cannot be greater than two 0.x releases prior to the
-# current stable.
-#
-# Tests are not run as tests may require newer versions of
-# rust.
-- template: ci/azure-check-minrust.yml@templates
+# This represents the minimum Rust version supported.
+# Tests are not run as tests may require newer versions of rust.
+- template: ci/check-minrust.yml@templates
   parameters:
     name: minrust
-    rust_version: 1.31.0
+    rust_version: 1.31.0 # The 2018 edition
