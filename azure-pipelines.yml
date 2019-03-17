@@ -29,11 +29,16 @@ jobs:
     displayName: Cargo check
     rust: stable
 
-# Try cross compiling
-- template: ci/cargo-check-docker.yml@templates
+# List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
+- template: ci/cargo-cross.yml@templates
   parameters:
-    name: cross_arm
-    container: messense/rust-musl-cross:armv7-musleabihf
+        name: cross
+        check_targets:
+                - i686-unknown-freebsd
+                - thumbv7em-none-eabihf # embedded
+        test_targets:
+                - mips-unknown-linux-musl
+                - armv7-unknown-linux-musleabihf
 
 # This represents the minimum Rust version supported.
 # Tests are not run as tests may require newer versions of rust.
@@ -50,7 +55,8 @@ jobs:
       - rustfmt
       - cargo_test
       - cargo_check
+      - cross
     git:
      user: xoac
-     email: deploy@example.com
+     email: sylwesterrapala@outlook.com
      repo: https://github.com/xoac/rust-azure-pipelines/

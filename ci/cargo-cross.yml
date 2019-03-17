@@ -1,0 +1,20 @@
+# SUPPORTED TARGETS https://github.com/rust-embedded/cross#supported-targets
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{parameters.displayName}}
+  steps:
+    - template: install-rust.yml
+      parameters:
+              rust_version: ${{parameters.rust}}
+
+    - script: cargo install cross
+      displayName: Instaling cross supprot
+
+   # Checking all targets
+   - ${{ each check_target in parameters.check_targets }}:
+       - script: cargo cross check --target  ${{ check_target }}
+
+   # Testing targets
+   - ${{ each test_target in parameters.test_targets }}:
+       - script: cargo cross test --target  ${{ test_target }}
+
