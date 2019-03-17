@@ -12,9 +12,9 @@ jobs:
 
     # Checking all targets
     - ${{ each check_target in parameters.check_targets }}:
-       - script: cargo cross check --target  ${{ check_target }}
+            - script: cross check --target  ${{ check_target }}
 
     # Testing targets
     - ${{ each test_target in parameters.test_targets }}:
-       - script: cargo cross test --target  ${{ test_target }}
+       - script: cross test --target  ${{ test_target }}
 
