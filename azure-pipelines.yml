@@ -33,6 +33,7 @@ jobs:
 - template: ci/cargo-cross.yml@templates
   parameters:
         name: cross
+        rust: stable
         check_targets:
                 - i686-unknown-freebsd
                 - thumbv7em-none-eabihf # embedded
