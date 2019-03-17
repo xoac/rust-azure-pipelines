@@ -10,11 +10,11 @@ jobs:
     - script: cargo install cross
       displayName: Instaling cross supprot
 
-   # Checking all targets
-   - ${{ each check_target in parameters.check_targets }}:
+    # Checking all targets
+    - ${{ each check_target in parameters.check_targets }}:
        - script: cargo cross check --target  ${{ check_target }}
 
-   # Testing targets
-   - ${{ each test_target in parameters.test_targets }}:
+    # Testing targets
+    - ${{ each test_target in parameters.test_targets }}:
        - script: cargo cross test --target  ${{ test_target }}
 
