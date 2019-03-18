@@ -10,9 +10,9 @@ jobs:
               rust_version: ${{parameters.rust}}
 
 # TEMPORATY FIX UNTIL https://github.com/rust-embedded/cross/pull/169 merged.
-# - script: cargo install cross
-#      displayName: Instaling cross supprot
     - script: |
+            git config --global user.email "not_necessery@dont.needed"
+            git config --global user.name "I am the merger one"
             git clone https://github.com/rust-embedded/cross
             cd cross
             git remote add pitkley https://github.com/pitkley/cross
