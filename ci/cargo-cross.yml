@@ -9,7 +9,17 @@ jobs:
       parameters:
               rust_version: ${{parameters.rust}}
 
-    - script: cargo install cross
+# TEMPORATY FIX UNTIL https://github.com/rust-embedded/cross/pull/169 merged.
+# - script: cargo install cross
+#      displayName: Instaling cross supprot
+    - script: |
+            git clone https://github.com/rust-embedded/cross
+            cd cross
+            git remote add pitkley https://github.com/pitkley/cross
+            git fetch pitkley
+            git checkout 718a19c
+            git merge -m "No pseudo tty" pitkley/docker-no-pseudo-tty
+            cargo install --force --path . 
       displayName: Instaling cross supprot
 
     # Checking all targets
