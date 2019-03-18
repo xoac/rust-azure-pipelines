@@ -36,7 +36,7 @@ jobs:
         rust: stable
         check_targets:
                 - i686-unknown-freebsd
-                - thumbv7em-none-eabihf # embedded
+                # - thumbv7em-none-eabihf # bare metal require no_std! future enable.
         test_targets:
                 - mips-unknown-linux-musl
                 - armv7-unknown-linux-musleabihf
