@@ -6,8 +6,8 @@ resources:
     - repository: templates
       type: github
       name: xoac/rust-azure-pipelines
-      endpoint: PiplinesTemplate
-
+      ref: refs/heads/master
+      endpoint: PipelinesTemplates
 
 jobs:
 # Check formatting
@@ -15,7 +15,7 @@ jobs:
   parameters:
     name: rustfmt
 
-# Test crate
+# Test stable crate
 - template: ci/test-stable.yml@templates
   parameters:
     name: cargo_test
