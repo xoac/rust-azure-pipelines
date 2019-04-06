@@ -1,6 +1,6 @@
 jobs:
 - job: ${{ parameters.name }}
-  displayName: ${{ parameters.displayName }}
+  displayName: ${{ parameters.displayName }} ${{parameters.rust_version}}
   strategy:
     matrix:
       Linux:

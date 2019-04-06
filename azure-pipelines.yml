@@ -22,6 +22,14 @@ jobs:
     displayName: Test cargo
     cross: true # Test on Windows and macOS
 
+# Test nightly
+- template: ci/test.yml@templates
+  parameters:
+    name: cargo_test
+    displayName: Test cargo
+    cross: false # Test on Windows and macOS
+    rust_version: nightly
+
 # Cargo check
 - template: ci/cargo-check.yml@templates
   parameters:
