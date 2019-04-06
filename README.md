@@ -4,13 +4,13 @@
 
 This repository contains ready to use templates for azure pipelines and can be used in very net manner.
 Support:
-- min rust version support
+- check minimal rust version is supported
 - test on stable, nightly or beta channels
-- check against common mistages with clippy lints
-- rustfmt check
+- check against common mistakes with clippy lints
+- check format with rustfmt 
 - cross **tests** and checks
-- running rust on Windows Linux or macOs Agent is supported.
-- deploy docs to github-pages.
+- running rust on Windows Linux or macOs Agent is supported
+- deploy docs to github-pages
 
 **And you can get it with minimal configuration.**
 
@@ -25,7 +25,7 @@ Support:
 This is useful if u want to have a separate documentation for master branch.
 
 #### Github part
-1. First you need to create a PAT (Personal Access Token) on Github.
+1. First you need to create a PAT (Personal Access Token) on Github. (recommended scopes for the token: `repo`, `user`, `admin:repo_hook`.)
 2. Then create a branch `gh-pages` and us it as repo page. [Here you find how to do it](https://help.github.com/en/articles/configuring-a-publishing-source-for-github-pages#enabling-github-pages-to-publish-your-site-from-master-or-gh-pages)
 
 #### Azure part

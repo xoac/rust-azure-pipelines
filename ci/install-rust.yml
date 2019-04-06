@@ -1,3 +1,7 @@
+# defaults for any parameters that aren't specified
+parameters:
+        rust_version: stable
+
 steps:
   # Linux and macOS.
   - script: |
