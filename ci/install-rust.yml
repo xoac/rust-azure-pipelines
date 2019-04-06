@@ -31,6 +31,7 @@ steps:
   # All platforms.
   - script: |
         rustup -V
+        rustup component list --installed
         rustc -Vv
         cargo -V
     displayName: Query rust and cargo versions
