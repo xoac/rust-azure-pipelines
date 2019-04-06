@@ -1,3 +1,6 @@
+parameters:
+        rust_version: stable
+
 jobs:
 - job: ${{ parameters.name }}
   displayName: ${{ parameters.displayName }} ${{parameters.rust_version}}
