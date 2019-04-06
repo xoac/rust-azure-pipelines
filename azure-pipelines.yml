@@ -18,14 +18,14 @@ jobs:
 # Test stable
 - template: ci/test.yml@templates
   parameters:
-    name: cargo_test
+    name: cargo_test_stable
     displayName: Test cargo
     cross: true # Test on Windows and macOS
 
 # Test nightly
 - template: ci/test.yml@templates
   parameters:
-    name: cargo_test
+    name: cargo_test_nightly
     displayName: Test cargo
     cross: false # Test on Windows and macOS
     rust_version: nightly
@@ -62,7 +62,7 @@ jobs:
   parameters:
     dependsOn:
       - rustfmt
-      - cargo_test
+      - cargo_test_stable
       - cargo_check
       - cross
     git:
