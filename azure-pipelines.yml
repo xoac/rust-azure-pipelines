@@ -35,13 +35,13 @@ jobs:
   parameters:
     name: cargo_check
     displayName: Cargo check
-    rust: stable
+    rust_version: stable
 
 # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
 - template: ci/cargo-cross.yml@templates
   parameters:
         name: cross
-        rust: stable
+        rust_version: stable
         check_targets:
                 - i686-unknown-freebsd
                 # - thumbv7em-none-eabihf # bare metal require no_std! future enable.
