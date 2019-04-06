@@ -27,7 +27,6 @@ jobs:
   parameters:
     name: cargo_test_nightly
     displayName: Test cargo
-    cross: false # Test on Windows and macOS
     rust_version: nightly
 
 # Cargo check
@@ -35,16 +34,15 @@ jobs:
   parameters:
     name: cargo_check
     displayName: Cargo check
-    rust_version: stable
 
 # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
 - template: ci/cargo-cross.yml@templates
   parameters:
         name: cross
-        rust_version: stable
+        rust_version: stable # You can specify here beta nightly or even 1.31
         check_targets:
                 - i686-unknown-freebsd
-                # - thumbv7em-none-eabihf # bare metal require no_std! future enable.
+                # - thumbv7em-none-eabihf # bare metal require no_std! future enabled.
         test_targets:
                 - mips-unknown-linux-gnu
                 - armv7-unknown-linux-musleabihf
@@ -57,7 +55,7 @@ jobs:
     rust_version: 1.31.0 # The 2018 edition
 
 # Deploy doc
-# TODO you need to modify git parameters and specify variable in pipelin. See README.md
+# TODO you need to modify git parameters and specify variable in pipeline. See [README.md](https://github.com/xoac/rust-azure-pipelines/blob/master/README.md)
 - template: ci/deploy-docs.yml@templates
   parameters:
     dependsOn:

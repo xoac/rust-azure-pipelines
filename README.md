@@ -49,7 +49,7 @@ resources:
     - repository: templates
       type: github
       name: xoac/rust-azure-pipelines
-      ref: refs/heads/master
+      ref: refs/heads/master  # You can also specify tag refs/tags/v0.0.1
       endpoint: PipelinesTemplates
 ```
 
