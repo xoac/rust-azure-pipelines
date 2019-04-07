@@ -71,7 +71,3 @@ jobs:
      email: sylwesterrapala@outlook.com
      repo: https://github.com/xoac/rust-azure-pipelines/
 
-# Release binary
-- template : ci/release.yml
-  parameters:
-    displayName: Realese
