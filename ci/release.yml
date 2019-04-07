@@ -20,7 +20,7 @@ jobs:
     inputs:
       gitHubConnection: PipelinesTemplates
       condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-      tags: $tagVersion
+      tagSource: auto
       action: create
       repositoryName: xoac/rust-azure-pipelines
 

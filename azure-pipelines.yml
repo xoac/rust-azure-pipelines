@@ -1,4 +1,11 @@
-trigger: ["master"]
+trigger:
+    branches:
+     include:
+       - master
+    tags:
+      include:
+        - v*
+
 pr: ["master"]
 
 resources:
