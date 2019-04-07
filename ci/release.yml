@@ -11,11 +11,16 @@ jobs:
 
   - script: cargo build --release
 
+  - script: |
+          tagVersion=$(toml --nocolor Cargo.toml package.version | sed -e 's/^"//' -e 's/"$//')
+          echo $tagVersion
+
   - task: GitHubRelease@0
     displayName: Create realese
     inputs:
       gitHubConnection: PipelinesTemplates
       condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+      tags: $tagVersion
       action: create
       repositoryName: xoac/rust-azure-pipelines
 
