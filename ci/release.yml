@@ -9,7 +9,7 @@ jobs:
   steps:
   - template: install-rust.yml
 
-  - script cargo install tomlcli
+  - script: cargo install tomlcli
     displayName: Instll toml CLI
 
   - script: cargo build --release
