@@ -72,7 +72,20 @@ jobs:
      repo: https://github.com/xoac/rust-azure-pipelines/
 
 # Release binary
-- template : ci/release.yml
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-  parameters:
-    displayName: Realese
+template: github-realese.yml@templates
+paramteres:
+  name: github_release
+  dependsOn:
+    - cargo_test_stable
+    - rustfmt
+    - rust_clippy
+  rust_version: stable
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+  contents: |
+    rust-azure-pipelines # TODO binary name create by cargo build --realese
+  targets: #TODO specify wanted targets
+   - x86_64-unknown-linux-gnu
+   - x86_64-pc-windows-msvc
+  github:
+    gitHubConnection: xoac
+    repositoryName: xoac/rust-azure-pipelines

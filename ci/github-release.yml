@@ -1,0 +1,51 @@
+parameters:
+  rust_version: stable
+
+jobs:
+- job: ${{ parameters.name }}
+  condition: ${{ parameters.condition }}
+  displayName: ${{ parameters.displayName }}
+  dependsOn:
+    - ${{ parameters.dependsOn }}
+  pool:
+    vmImage: ubuntu-16.04
+  steps:
+  - template: install-cross-rust.yml
+
+  - bash: |
+      MY_TAG="$(Build.SourceBranch)"
+      MY_TAG=${MY_TAG#refs/tags/}
+      echo $MY_TAG
+      echo "##vso[task.setvariable variable=build.my_tag]$MY_TAG"
+      DATE="$(date +%Y-%m-%d)"
+      echo "##vso[task.setvariable variable=build.date]$DATE"
+    displayName: "Create date and tag variables"
+
+  - ${{ each build_target  in parameters.targets }}:
+        - script: |
+                echo Start building ${{ build_target }}
+                cross build  --target  ${{ build_target }} --release
+          displayName: Relase build for target ${{ build_target }}
+        - task: CopyFiles@2
+          displayName: Copy files for target ${{ build_target }}
+          inputs:
+             sourceFolder: '$(Build.SourcesDirectory)/target/${{ build_target }}/release' 
+             contents: ${{ parameters.contents }}
+             targetFolder: '$(Build.BinariesDirectory)/${{ build_target }}'
+        - task: ArchiveFiles@2
+          displayName: Gather assets
+          inputs:
+              rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
+              archiveType: 'tar'
+              tarCompression: 'gz'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
+
+        - task: GitHubRelease@0
+          displayName: Create realese
+          inputs:
+              gitHubConnection: ${{ parameters.gitHubConnection }}
+              tagSource: manual
+              tag: '$(build.my_tag)'
+              action: edit
+              repositoryName: xoac/rust-azure-pipelines
+
