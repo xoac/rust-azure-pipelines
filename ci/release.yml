@@ -9,23 +9,23 @@ jobs:
   steps:
   - template: install-rust.yml
 
-  - script: cargo install tomlcli
-    displayName: Instll toml CLI
-
   - script: cargo build --release
     displayName: Build create in realese mode
+ 
+  - bash: |
+      MY_TAG="$(Build.SourceBranch)"
+      MY_TAG=${MY_TAG#refs/tags/}
+      echo $MY_TAG
+      echo "##vso[task.setvariable variable=build.my_tag]$MY_TAG"
+    displayName: "Create tag variable"
 
-  - script: |
-          tagVersion=$(toml --nocolor Cargo.toml package.version | sed -e 's/^"//' -e 's/"$//')
-          echo $tagVersion
-    displayName: Get create version
 
   - task: GitHubRelease@0
     displayName: Create realese
     inputs:
       gitHubConnection: PipelinesTemplates
-      condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-      tagSource: auto
+      tagSource: manual
+      tag: '$(build.my_tag)'
       action: edit
       repositoryName: xoac/rust-azure-pipelines
 
