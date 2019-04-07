@@ -69,14 +69,15 @@ jobs:
      repo: https://github.com/xoac/rust-azure-pipelines/
 
 # Release binary
-- template: ci/release.yml@templates
-  parameters:
+- job: deploy_release
+   parameters:
     dependsOn:
       - rustfmt
       - cargo_test_stable
       - cargo_check
       - cross
-  steps:
+   steps:
+      - template : ci/release.yml
       - task: GitHubRelease@0
         displayName: Create realese
         inputs:
