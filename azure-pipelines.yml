@@ -73,6 +73,5 @@ jobs:
 
 # Release binary
 - template : ci/release.yml
-  condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
   parameters:
     displayName: Realese
