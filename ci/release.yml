@@ -10,3 +10,12 @@ jobs:
   - template: install-rust.yml
 
   - script: cargo build --release
+
+  - task: GitHubRelease@0
+    displayName: Create realese
+    inputs:
+      gitHubConnection: PipelinesTemplates
+      condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+      action: create
+      repositoryName: xoac/rust-azure-pipelines
+

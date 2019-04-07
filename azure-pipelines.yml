@@ -69,14 +69,4 @@ jobs:
      repo: https://github.com/xoac/rust-azure-pipelines/
 
 # Release binary
-- job: deploy_release
-  steps:
-      - template : ci/release.yml
-      - task: GitHubRelease@0
-        displayName: Create realese
-        inputs:
-         gitHubConnection: PipelinesTemplates
-         condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-         action: create
-         repositoryName: xoac/rust-azure-pipelines
-
+- template : ci/release.yml
