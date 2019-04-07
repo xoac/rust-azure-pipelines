@@ -76,11 +76,12 @@ jobs:
       - cargo_test_stable
       - cargo_check
       - cross
-  task: GitHubRelease@0
-  displayName: Create realese
-  input:
-    gitHubConnection: PipelinesTemplates
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
-    action: create
-    repositoryName: xoac/rust-azure-pipelines
+  steps:
+      - task: GitHubRelease@0
+        displayName: Create realese
+        inputs:
+         gitHubConnection: PipelinesTemplates
+         condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+         action: create
+         repositoryName: xoac/rust-azure-pipelines
 
