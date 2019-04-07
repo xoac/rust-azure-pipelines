@@ -9,11 +9,16 @@ jobs:
   steps:
   - template: install-rust.yml
 
+  - script cargo install tomlcli
+    displayName: Instll toml CLI
+
   - script: cargo build --release
+    displayName: Build create in realese mode
 
   - script: |
           tagVersion=$(toml --nocolor Cargo.toml package.version | sed -e 's/^"//' -e 's/"$//')
           echo $tagVersion
+    displayName: Get create version
 
   - task: GitHubRelease@0
     displayName: Create realese
