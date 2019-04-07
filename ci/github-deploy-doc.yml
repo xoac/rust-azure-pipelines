@@ -1,10 +1,13 @@
 parameters:
   dependsOn: []
+  rust_version: stable
+  displayName: 'Deploy master API doc to Github'
+  branch: master
 
 jobs:
 - job: documentation
-  displayName: 'Deploy API Documentation'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  displayName: ${{ parameters.displayName }}
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.branch }}'))
   pool:
     vmImage: 'Ubuntu 16.04'
   dependsOn:
@@ -12,7 +15,7 @@ jobs:
   steps:
   - template: install-rust.yml
     parameters:
-      rust_version: stable
+      rust_version: ${{ parameters.rust_version}}
   - script: |
       cargo doc --all --no-deps
       cp -R target/doc '$(Build.BinariesDirectory)'
@@ -24,16 +27,16 @@ jobs:
       ls -la
       git init
       git config user.name 'Deployment Bot (from Azure Pipelines)'
-      git config user.email '${{ parameters.git.email }}'
+      git config user.email '${{ parameters.github.email }}'
       git config --global credential.helper 'store --file ~/.my-credentials'
       printf "protocol=https\nhost=github.com\nusername=$USER\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
-      git remote add origin ${{ parameters.git.repo }}
+      git remote add origin ${{ parameters.github.repo }}
       git checkout -b gh-pages
       git add .
       git commit -m 'Deploy API documentation'
       git push -f origin gh-pages
     env:
       GITHUB_TOKEN: $(DocPublishToken)
-      USER: ${{ parameters.git.user }}
+      USER: ${{ parameters.github.user }}
     workingDirectory: '$(Build.BinariesDirectory)'
     displayName: 'Deploy Documentation'

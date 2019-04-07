@@ -1,5 +1,5 @@
 parameters:
-        rust_version: stable
+  rust_version: stable
 
 jobs:
 - job: ${{ parameters.name }}
@@ -20,7 +20,8 @@ jobs:
   steps:
   - template: install-rust.yml
 
-  - script: cargo test
+  - script: |
+          cargo test
     env:
       LOOM_MAX_DURATION: 10
       CI: 'True'

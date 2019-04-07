@@ -1,7 +1,9 @@
 # SUPPORTED TARGETS https://github.com/rust-embedded/cross#supported-targets
 
 parameters:
-        rust_version: stable
+  rust_version: stable
+  check_target: []
+  test_targets: []
 
 jobs:
 - job: ${{ parameters.name }}
