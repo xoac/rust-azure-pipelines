@@ -1,12 +1,8 @@
 trigger:
-    branches:
-     include:
-       - master
-    tags:
-      include:
-        - v*
-
-pr: ["master"]
+  branches:
+    include: ['*']
+  tags:
+    include: ['*']
 
 resources:
   repositories:
