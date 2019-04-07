@@ -70,12 +70,6 @@ jobs:
 
 # Release binary
 - job: deploy_release
-  parameters:
-    dependsOn:
-      - rustfmt
-      - cargo_test_stable
-      - cargo_check
-      - cross
   steps:
       - template : ci/release.yml
       - task: GitHubRelease@0
