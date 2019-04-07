@@ -70,4 +70,5 @@ jobs:
 
 # Release binary
 - template : ci/release.yml
-  displayName: Realese
+  parameters:
+    displayName: Realese
