@@ -1,6 +1,6 @@
 [package]
 name = "rust-azure-pipelines"
-version = "0.0.1"
+version = "0.0.1a"
 authors = ["Sylwester Rąpała <sylwesterrapala@outlook.com>"]
 edition = "2018"
 description = "This is just example hello-world crate to test azure pipelines with rust. You will not find anything useful here"
