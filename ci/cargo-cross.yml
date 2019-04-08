@@ -22,7 +22,7 @@ jobs:
             git checkout 718a19c
             git merge -m "No pseudo tty" pitkley/docker-no-pseudo-tty
             cargo install --force --path . 
-      displayName: Instaling cross supprot
+      displayName: Instaling cross support
 
     # Checking all targets
     - ${{ each check_target in parameters.check_targets }}:
