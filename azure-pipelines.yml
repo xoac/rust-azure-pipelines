@@ -109,4 +109,4 @@ jobs:
    github:
     gitHubConnection: PipelinesTemplates # TODO githubConnection that allow you write to repo.
     repositoryName: xoac/rust-azure-pipelines
-    isPreRelease: false
+    isPreRelease: true
