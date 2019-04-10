@@ -1,7 +1,9 @@
 # SUPPORTED TARGETS https://github.com/rust-embedded/cross#supported-targets
 
 parameters:
-        rust_version: stable
+  rust_version: stable
+  check_target: []
+  test_targets: []
 
 jobs:
 - job: ${{ parameters.name }}
@@ -9,20 +11,7 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-    - template: install-rust.yml
-
-# TEMPORATY FIX UNTIL https://github.com/rust-embedded/cross/pull/169 merged.
-    - script: |
-            git config --global user.email "not_necessery@dont.needed"
-            git config --global user.name "I am the merger one"
-            git clone https://github.com/rust-embedded/cross
-            cd cross
-            git remote add pitkley https://github.com/pitkley/cross
-            git fetch pitkley
-            git checkout 718a19c
-            git merge -m "No pseudo tty" pitkley/docker-no-pseudo-tty
-            cargo install --force --path . 
-      displayName: Instaling cross support
+    - template: install-cross-rust.yml
 
     # Checking all targets
     - ${{ each check_target in parameters.check_targets }}:
