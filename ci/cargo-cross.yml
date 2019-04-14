@@ -15,9 +15,11 @@ jobs:
 
     # Checking all targets
     - ${{ each check_target in parameters.check_targets }}:
+            - script: cargo clean
             - script: cross check --target  ${{ check_target }}
 
     # Testing targets
     - ${{ each test_target in parameters.test_targets }}:
        - script: cross test --target  ${{ test_target }}
+       - script: cargo clean
 
