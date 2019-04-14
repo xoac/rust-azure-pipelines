@@ -9,7 +9,7 @@ resources:
     - repository: templates
       type: github
       name: xoac/rust-azure-pipelines
-      ref: refs/heads/master ## TODO you may want to change it to refs/tags/TAG_NAME. 
+      ref: refs/heads/master ## TODO you may want to change it to refs/tags/TAG_NAME.
       endpoint: PipelinesTemplates
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
 - template: ci/test.yml@templates
   parameters:
     name: cargo_test_nightly
-    displayName: Cargo test 
+    displayName: Cargo test
     rust_version: nightly
 
 # Test cross
@@ -69,7 +69,7 @@ jobs:
           - x86_64-unknown-linux-gnu
 
 ###################
-#    DEPLOY PART  #                         
+#    DEPLOY PART  #
 ###################
 # TODO you need to modify git parameters and specify variable in pipeline. See [README.md](https://github.com/xoac/rust-azure-pipelines/blob/master/README.md)
 
@@ -100,7 +100,7 @@ jobs:
    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
    contents: |
      *
-     !*.rlib  
+     !*.rlib
      !*.d
      !.*
    targets: # TODO specify targets you want to release
