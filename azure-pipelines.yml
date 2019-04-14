@@ -53,7 +53,7 @@ jobs:
     displayName: Cargo test 
     rust_version: nightly
 
-# Test croos
+# Test cross
 # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
 - template: ci/cargo-cross.yml@templates
   parameters:
