@@ -57,7 +57,7 @@ jobs:
         repositoryName: xoac/rust-azure-pipelines
         isPreRelease: ${{ parameters.github.isPreRelease }}
 
-${{ each build_target in parameters.targets }}:
+- ${{ each build_target in parameters.targets }}:
    ${{ if eq(build_target, 'x86_64-apple-darwin') }}:
    - job: ${{ parameters.name }}_macOS
      condition: ${{ parameters.condition }}
