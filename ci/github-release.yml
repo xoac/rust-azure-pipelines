@@ -59,7 +59,7 @@ jobs:
 
 - ${{ each build_target in parameters.targets }}:
   - ${{ if eq(build_target, 'x86_64-apple-darwin') }}:
-   - job: ${{ parameters.name }}_macOS
+   - job: github_release_x86_64-apple-darwin
      condition: ${{ parameters.condition }}
      displayName: ${{ parameters.displayName }} 
      dependsOn: ${{ parameters.dependsOn }}
