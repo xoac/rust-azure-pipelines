@@ -26,7 +26,7 @@ jobs:
 
   - ${{ each build_target  in parameters.targets }}:
      ${{ if not(or(eq(build_target, 'x86_64-apple-darwin'), eq(build_target, 'x86_64-pc-windows-msvc'))) }}:
-        - script: 
+        - script: |
                 echo Start building ${{ build_target }}
                 cross build  --target  ${{ build_target }} --release
                 ls -l
