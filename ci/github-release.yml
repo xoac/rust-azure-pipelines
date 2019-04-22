@@ -95,14 +95,13 @@ jobs:
             rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
             archiveType: 'tar'
 
-
-    - task: GitHubRelease@0
-      displayName: Create release
-      inputs:
-          gitHubConnection: ${{ parameters.github.gitHubConnection }}
-          tagSource: manual
-          title: '$(build.my_tag) - $(build.date)'
-          tag: '$(build.my_tag)'
-          action: edit
-          repositoryName: xoac/rust-azure-pipelines
-          isPreRelease: ${{ parameters.github.isPreRelease }}
+      - task: GitHubRelease@0
+        displayName: Create release
+        inputs:
+            gitHubConnection: ${{ parameters.github.gitHubConnection }}
+            tagSource: manual
+            title: '$(build.my_tag) - $(build.date)'
+            tag: '$(build.my_tag)'
+            action: edit
+            repositoryName: xoac/rust-azure-pipelines
+            isPreRelease: ${{ parameters.github.isPreRelease }}
