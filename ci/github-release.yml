@@ -59,7 +59,7 @@ jobs:
 
 - ${{ each build_target in parameters.targets }}:
   - ${{ if eq(build_target, 'x86_64-apple-darwin') }}:
-    - job: github_release_macOS
+    - job: ${{ parameters.name }}_macOS
       condition: ${{ parameters.condition }}
       displayName: ${{ parameters.displayName }} 
       dependsOn: ${{ parameters.dependsOn }}
@@ -96,3 +96,13 @@ jobs:
             archiveType: 'tar'
 
 
+    - task: GitHubRelease@0
+      displayName: Create release
+      inputs:
+          gitHubConnection: ${{ parameters.github.gitHubConnection }}
+          tagSource: manual
+          title: '$(build.my_tag) - $(build.date)'
+          tag: '$(build.my_tag)'
+          action: edit
+          repositoryName: xoac/rust-azure-pipelines
+          isPreRelease: ${{ parameters.github.isPreRelease }}
