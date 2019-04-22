@@ -53,6 +53,7 @@ jobs:
         tagSource: manual
         title: '$(build.my_tag) - $(build.date)'
         tag: '$(build.my_tag)'
+        assetUploadMode: replace
         action: edit
         repositoryName: xoac/rust-azure-pipelines
         isPreRelease: ${{ parameters.github.isPreRelease }}
@@ -94,6 +95,8 @@ jobs:
         inputs:
             rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
             archiveType: 'tar'
+            tarCompression: 'gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
 
       - task: GitHubRelease@0
         displayName: Create release
@@ -102,6 +105,7 @@ jobs:
             tagSource: manual
             title: '$(build.my_tag) - $(build.date)'
             tag: '$(build.my_tag)'
+            assetUploadMode: replace
             action: edit
             repositoryName: xoac/rust-azure-pipelines
             isPreRelease: ${{ parameters.github.isPreRelease }}
