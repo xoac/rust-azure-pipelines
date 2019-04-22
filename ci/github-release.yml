@@ -61,7 +61,7 @@ jobs:
   - ${{ if eq(build_target, 'x86_64-apple-darwin') }}:
     - job: ${{ parameters.name }}_macOS
       condition: ${{ parameters.condition }}
-      displayName: ${{ parameters.displayName }} 
+      displayName: ${{ parameters.displayName }} (macOS) 
       dependsOn: ${{ parameters.dependsOn }}
       pool:
         vmImage: macOS-10.13
