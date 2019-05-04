@@ -4,6 +4,8 @@ parameters:
     isPreRelease: false
   dependsOn: []
   displayName: "Release to github"
+  tarCompression: 'none'
+  archiveType: 'zip'
 
 jobs:
 - job: ${{ parameters.name }}
@@ -42,8 +44,8 @@ jobs:
           displayName: Gather assets
           inputs:
               rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
-              archiveType: 'tar'
-              tarCompression: 'gz'
+              archiveType: ${{ parameters.archiveType }}
+              tarCompression: ${{ parameters.tarCompression }}
               archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
 
   - task: GitHubRelease@0
@@ -94,8 +96,8 @@ jobs:
         displayName: Gather assets
         inputs:
             rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
-            archiveType: 'tar'
-            tarCompression: 'gz'
+            archiveType: ${{ parameters.archiveType }}
+            tarCompression: ${{ parameters.tarCompression }}
             archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
 
       - task: GitHubRelease@0
@@ -145,8 +147,8 @@ jobs:
         displayName: Gather assets
         inputs:
             rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
-            archiveType: 'tar'
-            tarCompression: 'gz'
+            archiveType: ${{ parameters.archiveType }}
+            tarCompression: ${{ parameters.tarCompression }}
             archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
 
       - task: GitHubRelease@0
