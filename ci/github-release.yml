@@ -46,7 +46,7 @@ jobs:
               rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
               archiveType: ${{ parameters.archiveType }}
               tarCompression: ${{ parameters.tarCompression }}
-              archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.zip'
 
   - task: GitHubRelease@0
     displayName: Create release
@@ -98,7 +98,7 @@ jobs:
             rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
             archiveType: ${{ parameters.archiveType }}
             tarCompression: ${{ parameters.tarCompression }}
-            archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.zip'
 
       - task: GitHubRelease@0
         displayName: Create release
@@ -149,7 +149,7 @@ jobs:
             rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
             archiveType: ${{ parameters.archiveType }}
             tarCompression: ${{ parameters.tarCompression }}
-            archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.tar.gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/rust-azure-pipelines-$(build.my_tag)-${{ build_target }}.zip'
 
       - task: GitHubRelease@0
         displayName: Create release
