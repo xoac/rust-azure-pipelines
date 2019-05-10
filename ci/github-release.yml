@@ -2,6 +2,7 @@ parameters:
   rust_version: stable
   github:
     isPreRelease: false
+    repositoryName: '$(Build.Repository.Name)'
   dependsOn: []
   displayName: "Release to github"
   tarCompression: 'none'
@@ -57,7 +58,7 @@ jobs:
         tag: '$(build.my_tag)'
         assetUploadMode: replace
         action: edit
-        repositoryName: xoac/rust-azure-pipelines
+        repositoryName: ${{ parameters.github.repositoryName }}
         isPreRelease: ${{ parameters.github.isPreRelease }}
 
 - ${{ each build_target in parameters.targets }}:
@@ -109,7 +110,7 @@ jobs:
             tag: '$(build.my_tag)'
             assetUploadMode: replace
             action: edit
-            repositoryName: xoac/rust-azure-pipelines
+            repositoryName: ${{ parameters.github.repositoryName }}
             isPreRelease: ${{ parameters.github.isPreRelease }}
 
   - ${{ if eq(build_target, 'x86_64-pc-windows-msvc') }}:
@@ -160,5 +161,5 @@ jobs:
             tag: '$(build.my_tag)'
             assetUploadMode: replace
             action: edit
-            repositoryName: xoac/rust-azure-pipelines
+            repositoryName: ${{ parameters.github.repositoryName }}
             isPreRelease: ${{ parameters.github.isPreRelease }}
