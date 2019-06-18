@@ -7,7 +7,7 @@ parameters:
   displayName: "Release to github"
   tarCompression: 'none'
   archiveType: 'zip'
-  archiveName: '${Build.Repository.Name}'
+  archiveName: '$(Build.Repository.Name)'
 
 jobs:
 - job: ${{ parameters.name }}
