@@ -48,7 +48,7 @@ jobs:
               rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
               archiveType: ${{ parameters.archiveType }}
               tarCompression: ${{ parameters.tarCompression }}
-              archiveFile: '$(Build.ArtifactStagingDirectory)/$${{ parameters.archiveName }}-$(build.my_tag)-${{ build_target }}.zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}-$(build.my_tag)-${{ build_target }}.zip'
 
   - task: GitHubRelease@0
     displayName: Create release
@@ -59,6 +59,7 @@ jobs:
         tag: '$(build.my_tag)'
         assetUploadMode: replace
         action: edit
+        assets: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}*'
         repositoryName: ${{ parameters.github.repositoryName }}
         isPreRelease: ${{ parameters.github.isPreRelease }}
 
@@ -111,6 +112,7 @@ jobs:
             tag: '$(build.my_tag)'
             assetUploadMode: replace
             action: edit
+            assets: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}*'
             repositoryName: ${{ parameters.github.repositoryName }}
             isPreRelease: ${{ parameters.github.isPreRelease }}
 
@@ -162,5 +164,6 @@ jobs:
             tag: '$(build.my_tag)'
             assetUploadMode: replace
             action: edit
+            assets: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}*'
             repositoryName: ${{ parameters.github.repositoryName }}
             isPreRelease: ${{ parameters.github.isPreRelease }}
