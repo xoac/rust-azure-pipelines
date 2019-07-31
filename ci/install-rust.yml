@@ -24,22 +24,21 @@ steps:
     displayName: "Install rust (windows)"
     condition: eq(variables['Agent.OS'], 'Windows_NT')
 
-  # ####################
-  #All platforms.
-  - script: |
-      set -e
-      rustup toolchain add nightly
-      rustup default nightly
-    displayName: add nightly toolchain for variables['Agent.OS']
-
   # Install additional components:
   - ${{ each component in parameters.components }}:
           - script: rustup component add ${{ component }}
 
   # All platforms.
   - script: |
+        echo "rustup -V"
         rustup -V
+        echo "rustup toolchain list"
+        rustup toolchain list
+        echo "rustup component list --installed"
         rustup component list --installed
+        echo "rustc -Vv"
         rustc -Vv
+        echo "cargo -V"
         cargo -V
-    displayName: Query rust and cargo versions
+
+    displayName: Information aboute rust ecosystem versions and components
