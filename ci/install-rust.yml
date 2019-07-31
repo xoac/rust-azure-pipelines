@@ -24,6 +24,14 @@ steps:
     displayName: "Install rust (windows)"
     condition: eq(variables['Agent.OS'], 'Windows_NT')
 
+  # ####################
+  #All platforms.
+  - script: |
+      set -e
+      rustup toolchain add nightly
+      rustup default nightly
+    displayName: add nightly toolchain for variables['Agent.OS']
+
   # Install additional components:
   - ${{ each component in parameters.components }}:
           - script: rustup component add ${{ component }}
