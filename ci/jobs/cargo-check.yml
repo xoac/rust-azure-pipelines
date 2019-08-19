@@ -15,7 +15,7 @@ jobs:
 
   variables:
     - ${{ if parameters.release }}
-    release: "--release"
+    release: '--release'
 
   - script: |
     set -e
