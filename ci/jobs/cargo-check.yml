@@ -15,7 +15,7 @@ jobs:
     parameters:
       toolchain: ${{ parameters.rust }}
  
-  - script: echo '##vso[task.setvariable cliflags]$(cliflags) --release'
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
     enabled: ${{ parameters.release}}
 
   - script: echo $(a)
