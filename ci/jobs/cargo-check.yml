@@ -30,9 +30,9 @@ jobs:
     enabled: ${{ parameters.release}}
     displayName: "Set using release mode"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ parameters.package }}'
-    enabled: ${{ parameters.package }}
-    displayName: "Package(s) to check '${{ parameters.package}}'"
+  - ${{ each pkg in parameters.package }}
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
+      displayName: "Add package to check '${{ pkg }}'"
 
 
   - script: echo $(cliflags)
