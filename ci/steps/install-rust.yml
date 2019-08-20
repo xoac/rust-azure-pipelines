@@ -37,7 +37,7 @@ steps:
       displayName: "Adding target '${{ target }}'"
 
   # All platforms.
-  - script: |
+  - bash: |
       set -e 
       rustup -V
       rustup component list --installed
