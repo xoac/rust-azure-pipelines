@@ -27,10 +27,6 @@ jobs:
     parameters:
       toolchain: ${{ parameters.rust }}
  
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) <flag>'
-    enabled: ${{ parameters.}}
-    displayName: ""
-
   - ${{ each pkg in parameters.package }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
       displayName: "Add package to check '${{ pkg }}'"
