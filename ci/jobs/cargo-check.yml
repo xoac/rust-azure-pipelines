@@ -1,18 +1,19 @@
 parameters:
   rust: stable
   # parameters from cargo check --help
-  release: true
-  package: ['package1', 'package2']
-  exclude: []
-  lib: false 
-  bin: ''
-  bins: false
+  package: []     #  Package(s) to check
+  all: false                            #  Check all packages in the workspace
+  exclude: []   #  Exclude packages from the check
+  lib: false                            #  Check only this package's library
+  bin: ['bin1', 'bin2']      # Check only the specified binary
+  bins: false # Check all binaries
   example: []
   examples: false
   test: []
   tests: false 
 
   benches: false
+  release: true
 
 jobs:
 - job: ${{ parameters.name }}
@@ -26,14 +27,37 @@ jobs:
     parameters:
       toolchain: ${{ parameters.rust }}
  
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
-    enabled: ${{ parameters.release}}
-    displayName: "Set using release mode"
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) <flag>'
+    enabled: ${{ parameters.}}
+    displayName: ""
 
   - ${{ each pkg in parameters.package }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
       displayName: "Add package to check '${{ pkg }}'"
 
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all'
+    enabled: ${{ parameters.all}}
+    displayName: "Check all packages in the workspace"
+
+  - ${{ each pkg in parameters.exclude }}:
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
+      displayName: "Exclude package from check '${{ pkg }}'"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --lib'
+    enabled: ${{ parameters.lib}}
+    displayName: "Check only this package's library"
+
+  - ${{ each bin in parameters.bin }}:
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ bin }}'
+      displayName: "Add binary '${{ bin }}' to check"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bins'
+    enabled: ${{ parameters.bins}}
+    displayName: ""
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
+    enabled: ${{ parameters.release}}
+    displayName: "Set using release mode"
 
   - script: echo $(cliflags)
 
