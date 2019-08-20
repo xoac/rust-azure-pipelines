@@ -17,8 +17,9 @@ jobs:
  
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
     enabled: ${{ parameters.release}}
+    displayName: "Set using release mode"
 
-  - script: echo $(a)
+  - script: echo $(cliflags)
 
     #   - script: |
     #     set -e

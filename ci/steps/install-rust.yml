@@ -38,10 +38,11 @@ steps:
 
   # All platforms.
   - script: |
-        rustup -V
-        rustup component list --installed
-        rustup show
-        echo ""
-        rustc -Vv
-        cargo -V
+      set -e 
+      rustup -V
+      rustup component list --installed
+      rustup show
+      echo ""
+      rustc -Vv
+      cargo -V
     displayName: Query rustup, rust and cargo versions
