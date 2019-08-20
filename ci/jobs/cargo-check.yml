@@ -9,13 +9,13 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   variables:
-    - cliflags: 'check'
+    cliflags: check
   steps:
   - template: ../task/install-rust.yml
     parameters:
       toolchain: ${{ parameters.rust }}
  
-  - script: echo '##vso[task.setvariable cliflags]$cliflags --release'
+  - script: echo '##vso[task.setvariable cliflags]$(cliflags) --release'
     enabled: ${{ parameters.release}}
 
   - script: echo $(a)
