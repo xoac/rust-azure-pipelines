@@ -8,20 +8,23 @@ jobs:
   displayName: ${{ parameters.displayName }}
   pool:
     vmImage: ubuntu-16.04
+  variables:
+    - cliflags: 'check'
   steps:
   - template: ../task/install-rust.yml
     parameters:
       toolchain: ${{ parameters.rust }}
+ 
+  - script: echo '##vso[task.setvariable cliflags]$cliflags --release'
+    enabled: ${{ parameters.release}}
 
-  variables:
-    - ${{ if parameters.release }}
-    release: '--release'
+  - script: echo $(a)
 
-  - script: |
-    set -e
-    cargo check ${{ variables.release }} 
-    displayName: Check features
-
-  - ${{ if parameters.benches }}:
-    - script: cargo check ${{variables.release }} --benches
-      displayName: Check benchmarks
+    #   - script: |
+    #     set -e
+    #     cargo check $[ variables.release ]
+    #     displayName: Check features
+    # 
+    #   - ${{ if parameters.benches }}:
+    #     - script: cargo check ${{variables.release }} --benches
+    #       displayName: Check benchmarks
