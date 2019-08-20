@@ -1,7 +1,18 @@
 parameters:
   rust: stable
-  benches: false
+  # parameters from cargo check --help
   release: true
+  package: ['package1', 'package2']
+  exclude: []
+  lib: false 
+  bin: ''
+  bins: false
+  example: []
+  examples: false
+  test: []
+  tests: false 
+
+  benches: false
 
 jobs:
 - job: ${{ parameters.name }}
@@ -18,6 +29,11 @@ jobs:
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
     enabled: ${{ parameters.release}}
     displayName: "Set using release mode"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ parameters.package }}'
+    enabled: ${{ parameters.package }}
+    displayName: "Package(s) to check '${{ parameters.package}}'"
+
 
   - script: echo $(cliflags)
 
