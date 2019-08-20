@@ -11,7 +11,7 @@ jobs:
   variables:
     cliflags: check
   steps:
-  - template: ../task/install-rust.yml
+  - template: ../steps/install-rust.yml
     parameters:
       toolchain: ${{ parameters.rust }}
  
