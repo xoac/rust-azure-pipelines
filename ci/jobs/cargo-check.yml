@@ -130,23 +130,23 @@ jobs:
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --message-format ${{ parameters['message-format'] }}"
     enabled: ${{ ne(parameters['message-format'], '') }}
-    displayName: "Set error format to parameters['message-format']"
+    displayName: "Set error format to ${{ parameters['message-format'] }}"
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --verbose }}"
     enabled: ${{ parameters['verbose'] }}
-    displayname: "use verbose output"
+    displayName: "use verbose output"
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --color ${{ parameters['color'] }}"
     enabled: ${{ ne(parameters['color'], '') }}
-    displayname: "Coloring: ${{ parameters['color'] }}"
+    displayName: "Coloring: ${{ parameters['color'] }}"
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --frozen }}"
     enabled: ${{ parameters['frozen'] }}
-    displayname: "Require Cargo.lock and cache are up to date"
+    displayName: "Require Cargo.lock and cache are up to date"
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --locked }}"
     enabled: ${{ parameters['locked'] }}
-    displayname: "Require Cargo.lock is up to date"
+    displayName: "Require Cargo.lock is up to date"
 
   - ${{ each z in parameters['Z'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --Z ${{ z }}'
