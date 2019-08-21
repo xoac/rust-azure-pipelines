@@ -89,7 +89,7 @@ jobs:
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --profile ${{ parameters.profile }}'
     enabled: ${{ parameters.profile }}
-    displayName: "Set profile ('${{ parameters.profile') to build the selected target for"
+    displayName: "Set profile ('${{ parameters.profile }}') to build the selected target for"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --features ${{ parameters.features }}'
     enabled: ${{ parameters.features }}
