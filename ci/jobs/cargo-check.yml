@@ -44,6 +44,10 @@ jobs:
     parameters:
       rustup_toolchain: ${{ parameters.rust }}
  
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --quiet'
+    enabled: ${{ parameters['quiet'] }}
+    displayName: "No output printed to stdout"
+
   - ${{ each pkg in parameters.package }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
       displayName: "Add package to check '${{ pkg }}'"
@@ -143,6 +147,10 @@ jobs:
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --locked }}"
     enabled: ${{ parameters['locked'] }}
     displayname: "Require Cargo.lock is up to date"
+
+  - ${{ each z in parameters['Z'] }}:
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --Z ${{ z }}'
+      displayName: "Add Z flag ${{ z }}"
 
   - script: echo $(cliflags)
 
