@@ -1,5 +1,6 @@
 parameters:
   rust: stable
+
   # parameters from cargo check --help
   package: []     #  Package(s) to check
   all: false                            #  Check all packages in the workspace
@@ -8,12 +9,19 @@ parameters:
   bin: ['bin1', 'bin2']      # Check only the specified binary
   bins: false # Check all binaries
   example: []
-  examples: false
+  examples: false # Check all examples
   test: []
   tests: false 
-
+  benche: []
   benches: false
+  all_targets: false
   release: true
+  profile: ''
+  features: '' # Space-separated list of features to activate
+  all-features: false #  Activate all available features
+  no-default-features: false  #  Do not activate the `default` feature
+  target: '' # Check for the target triple
+  target-dir: ''  # Directory for all generated artifacts
 
 jobs:
 - job: ${{ parameters.name }}
@@ -21,47 +29,95 @@ jobs:
   pool:
     vmImage: ubuntu-16.04
   variables:
-    cliflags: check
+    cliflags: ''
   steps:
   - template: ../steps/install-rust.yml
     parameters:
-      toolchain: ${{ parameters.rust }}
+      rustup_toolchain: ${{ parameters.rust }}
  
   - ${{ each pkg in parameters.package }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
       displayName: "Add package to check '${{ pkg }}'"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all'
-    enabled: ${{ parameters.all}}
+    enabled: ${{ parameters.all }}
     displayName: "Check all packages in the workspace"
 
   - ${{ each pkg in parameters.exclude }}:
-    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --exclude ${{ pkg }}'
       displayName: "Exclude package from check '${{ pkg }}'"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --lib'
-    enabled: ${{ parameters.lib}}
+    enabled: ${{ parameters.lib }}
     displayName: "Check only this package's library"
 
   - ${{ each bin in parameters.bin }}:
-    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ bin }}'
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ bin }}'
       displayName: "Add binary '${{ bin }}' to check"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bins'
-    enabled: ${{ parameters.bins}}
-    displayName: ""
+    enabled: ${{ parameters.bins }}
+    displayName: "Check all binaries"
+
+  - ${{ each exa in parameters.example }}:
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ exa }}'
+      displayName: "Add example '${{ exa }}' to check"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --examples'
+    enabled: ${{ parameters.examples }}
+    displayName: "check all examples"
+
+  - ${{ each tes in parameters.test }}:
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ tes }}'
+      displayName: "Add test '${{ tes }}' to check"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bents'
+    enabled: ${{ parameters.bents }}
+    displayName: "check all bents"
+
+  - ${{ each ben in parameters.bench }}:
+    - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ ben }}'
+      displayName: "Add bench '${{ ben }}' to check"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --benchs'
+    enabled: ${{ parameters.benchs }}
+    displayName: "check all benchs"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
-    enabled: ${{ parameters.release}}
+    enabled: ${{ parameters.release }}
     displayName: "Set using release mode"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --profile ${{ parameters.profile }}'
+    enabled: ${{ parameters.profile }}
+    displayName: "Set profile ('${{ parameters.profile') to build the selected target for"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --features ${{ parameters.features }}'
+    enabled: ${{ parameters.features }}
+    displayName: "Space-separated list of features to activate: ${{ parameters.features }}"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all-features'
+    enabled: ${{ parameters.all-features }}
+    displayName: "Activate all available features"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --no-default-features'
+    enabled: ${{ parameters.no-default-features }}
+    displayName: "Do not activate the `default` feature"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --target ${{ parameters.target }}'
+    enabled: ${{ parameters.target }}
+    displayName: "Check for the target triple"
+
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --target-dir ${{ parameters.target-dir }}'
+    enabled: ${{ parameters.target-dir }}
+    displayName: "Directory for all generated artifacts"
 
   - script: echo $(cliflags)
 
-    #   - script: |
-    #     set -e
-    #     cargo check $[ variables.release ]
-    #     displayName: Check features
-    # 
+  - script: |
+    set -e
+    cargo check $(cliflags)
+    displayName: Run Cargo check $(cliflags)
+     
     #   - ${{ if parameters.benches }}:
     #     - script: cargo check ${{variables.release }} --benches
     #       displayName: Check benchmarks
