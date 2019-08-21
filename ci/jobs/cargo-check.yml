@@ -1,27 +1,36 @@
 parameters:
-  rust: stable
+  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
 
   # parameters from cargo check --help
-  package: []     #  Package(s) to check
-  all: false                            #  Check all packages in the workspace
-  exclude: []   #  Exclude packages from the check
-  lib: false                            #  Check only this package's library
-  bin: ['bin1', 'bin2']      # Check only the specified binary
-  bins: false # Check all binaries
-  example: []
-  examples: false # Check all examples
-  test: []
-  tests: false 
-  benche: []
-  benches: false
-  all-targets: false
-  release: true
-  profile: ""
-  features: null # Space-separated list of features to activate
-  all-features: false #  Activate all available features
-  no-default-features: false  #  Do not activate the `default` feature
-  target: null # Check for the target triple
-  target-dir: null  # Directory for all generated artifacts
+  quiet: false                # No output printed to stdout
+  package: []                 # Package(s) to check
+  all: false                  # Check all packages in the workspace
+  exclude: []                 # Exclude packages from the check
+  lib: false                  # Check only this package's library
+  bin: []                     # Check only the specified binary
+  bins: false                 # Check all binaries
+  example: []                 # Check only the specified example
+  examples: false             # Check all examples
+  test: []                    # Check only the specified test target
+  tests: false                # Check all tests
+  benche: []                  # Check only the specified bench target
+  benches: false              # Check all benches
+  all-targets: false          # Check all targets
+  release: false              # Check artifacts in release mode, with optimizations
+  profile: ""                 # Profile to build the selected target for
+  features: ''                # Space-separated list of features to activate
+  all-features: false         # Activate all available features
+  no-default-features: false  # Do not activate the `default` feature
+  target: ''                  # Check for the target triple
+  target-dir: ''              # Directory for all generated artifacts
+  manifest-path: ''           # Path to Cargo.toml
+  message-format: ''          # Error format [default: human]  [possible values: human, json, short]
+  verbose: false              # Use verbose output
+  color: ''                   # Coloring: auto, always, never
+  frozen: false               # Require Cargo.lock and cache are up to date
+  locked: false               # Require Cargo.lock is up to date
+  Z: []                       # Unstable (nightly-only) flags to Cargo, see 'cargo -Z help' for details
+
 
 jobs:
 - job: ${{ parameters.name }}
@@ -110,6 +119,30 @@ jobs:
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --target-dir ${{ parameters['target-dir'] }}"
     enabled: ${{ ne(parameters['target-dir'], '') }}
     displayName: "Directory for all generated artifacts"
+
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --manifest-path ${{ parameters['manifest-path'] }}"
+    enabled: ${{ ne(parameters['manifest-path'], '') }}
+    displayName: "Set custom path to Cargo.toml"
+
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --message-format ${{ parameters['message-format'] }}"
+    enabled: ${{ ne(parameters['message-format'], '') }}
+    displayName: "Set error format to parameters['message-format']"
+
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --verbose }}"
+    enabled: ${{ parameters['verbose'] }}
+    displayname: "use verbose output"
+
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --color ${{ parameters['color'] }}"
+    enabled: ${{ ne(parameters['color'], '') }}
+    displayname: "Coloring: ${{ parameters['color'] }}"
+
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --frozen }}"
+    enabled: ${{ parameters['frozen'] }}
+    displayname: "Require Cargo.lock and cache are up to date"
+
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --locked }}"
+    enabled: ${{ parameters['locked'] }}
+    displayname: "Require Cargo.lock is up to date"
 
   - script: echo $(cliflags)
 
