@@ -14,14 +14,14 @@ parameters:
   tests: false 
   benche: []
   benches: false
-  all_targets: false
+  all-targets: false
   release: true
-  profile: ''
-  features: '' # Space-separated list of features to activate
+  profile: ""
+  features: null # Space-separated list of features to activate
   all-features: false #  Activate all available features
   no-default-features: false  #  Do not activate the `default` feature
-  target: '' # Check for the target triple
-  target-dir: ''  # Directory for all generated artifacts
+  target: null # Check for the target triple
+  target-dir: null  # Directory for all generated artifacts
 
 jobs:
 - job: ${{ parameters.name }}
@@ -71,52 +71,50 @@ jobs:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ tes }}'
       displayName: "Add test '${{ tes }}' to check"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bents'
-    enabled: ${{ parameters.bents }}
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --benches'
+    enabled: ${{ parameters.benches }}
     displayName: "check all bents"
 
   - ${{ each ben in parameters.bench }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ ben }}'
       displayName: "Add bench '${{ ben }}' to check"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --benchs'
-    enabled: ${{ parameters.benchs }}
-    displayName: "check all benchs"
+  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --benches'
+    enabled: ${{ parameters.benches }}
+    displayName: "check all benches"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
     enabled: ${{ parameters.release }}
     displayName: "Set using release mode"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --profile ${{ parameters.profile }}'
-    enabled: ${{ parameters.profile }}
+    enabled: ${{ ne(parameters.profile, '') }}
     displayName: "Set profile ('${{ parameters.profile }}') to build the selected target for"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --features ${{ parameters.features }}'
-    enabled: ${{ parameters.features }}
+    enabled: ${{ ne(parameters.features, '') }}
     displayName: "Space-separated list of features to activate: ${{ parameters.features }}"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all-features'
-    enabled: ${{ parameters.all-features }}
+    enabled: ${{ parameters['all-features'] }}
     displayName: "Activate all available features"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --no-default-features'
-    enabled: ${{ parameters.no-default-features }}
+    enabled: ${{ parameters['no-default-features'] }}
     displayName: "Do not activate the `default` feature"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --target ${{ parameters.target }}'
-    enabled: ${{ parameters.target }}
+    enabled: ${{ ne(parameters.target, '')  }}
     displayName: "Check for the target triple"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --target-dir ${{ parameters.target-dir }}'
-    enabled: ${{ parameters.target-dir }}
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --target-dir ${{ parameters['target-dir'] }}"
+    enabled: ${{ ne(parameters['target-dir'], '') }}
     displayName: "Directory for all generated artifacts"
 
   - script: echo $(cliflags)
 
-  - script: |
-    set -e
-    cargo check $(cliflags)
-    displayName: Run Cargo check $(cliflags)
+  - script: cargo check $(cliflags)
+    displayName: Run Cargo check with defined flags
      
     #   - ${{ if parameters.benches }}:
     #     - script: cargo check ${{variables.release }} --benches
