@@ -35,10 +35,7 @@ parameters:
     Z: []                       # unstable-options Enable nightly-only flags: unstable-options = Allow
                                 # use of experimental features
 
-jobs:
-- job: ${{ parameters.name }}
-  displayName: ${{ parameters.displayName }}
-  strategy:
+strategy:                       # Default strategy to test on Windows, MacOs and Linux.
     matrix:
       Linux:
         vmImage: ubuntu-16.04
@@ -46,6 +43,11 @@ jobs:
         vmImage: macOS-10.13
       Windows:
         vmImage: vs2017-win2016
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  strategy: ${{ strategy }}
   pool:
     vmImage: $(vmImage)
   variables:
