@@ -77,7 +77,7 @@ jobs:
     displayName: "Check all binaries"
 
   - ${{ each exa in parameters['example'] }}:
-    - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --bin ${{ exa }}'
+    - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --example ${{ exa }}'
       displayName: "Add example '${{ exa }}' to check"
 
   - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --examples'
@@ -85,16 +85,12 @@ jobs:
     displayName: "check all examples"
 
   - ${{ each tes in parameters['test'] }}:
-    - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --bin ${{ tes }}'
+    - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --test ${{ tes }}'
       displayName: "Add test '${{ tes }}' to check"
 
-  - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --benches'
-    enabled: ${{ parameters['benches'] }}
-    displayName: "check all bents"
-
-  - ${{ each ben in parameters['bench'] }}:
-    - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --bin ${{ ben }}'
-      displayName: "Add bench '${{ ben }}' to check"
+  - ${{ each ben in parameters['benche'] }}:
+    - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --benche ${{ ben }}'
+      displayName: "Add benche '${{ ben }}' to check"
 
   - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --benches'
     enabled: ${{ parameters['benches'] }}
