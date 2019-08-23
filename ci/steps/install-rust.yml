@@ -4,6 +4,8 @@ parameters:
   components: []                # Rust commponents to be installed
   targets: []                   # Rust targets to be installed
   steps:                        # Custom steps
+  - script: echo "Nothing"
+    enabled: false
 
 steps:
   # Linux and macOS.
