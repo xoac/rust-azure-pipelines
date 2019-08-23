@@ -1,7 +1,7 @@
 parameters:
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
 
-  # parameters from cargo check --help
+  # parameters from `cargo check --help`
   quiet: false                # No output printed to stdout
   package: []                 # Package(s) to check
   all: false                  # Check all packages in the workspace
@@ -33,8 +33,8 @@ parameters:
 
 
 jobs:
-- job: ${{ parameters.name }}
-  displayName: ${{ parameters.displayName }}
+- job: ${{ parameters['name }}
+  displayName: ${{ parameters['displayName }}
   pool:
     vmImage: ubuntu-16.04
   variables:
@@ -42,71 +42,73 @@ jobs:
   steps:
   - template: ../steps/install-rust.yml
     parameters:
-      rustup_toolchain: ${{ parameters.rust }}
+      rustup_toolchain: ${{ parameters['rust }}
  
+  # ##########################################################################################
+  # Order of script modifying `cliflags` is the same as in paramters.
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --quiet'
     enabled: ${{ parameters['quiet'] }}
     displayName: "No output printed to stdout"
 
-  - ${{ each pkg in parameters.package }}:
+  - ${{ each pkg in parameters['package'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --package ${{ pkg }}'
       displayName: "Add package to check '${{ pkg }}'"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all'
-    enabled: ${{ parameters.all }}
+    enabled: ${{ parameters['all'] }}
     displayName: "Check all packages in the workspace"
 
-  - ${{ each pkg in parameters.exclude }}:
+  - ${{ each pkg in parameters['exclude'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --exclude ${{ pkg }}'
       displayName: "Exclude package from check '${{ pkg }}'"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --lib'
-    enabled: ${{ parameters.lib }}
+    enabled: ${{ parameters['lib'] }}
     displayName: "Check only this package's library"
 
-  - ${{ each bin in parameters.bin }}:
+  - ${{ each bin in parameters['bin'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ bin }}'
       displayName: "Add binary '${{ bin }}' to check"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bins'
-    enabled: ${{ parameters.bins }}
+    enabled: ${{ parameters['bins'] }}
     displayName: "Check all binaries"
 
-  - ${{ each exa in parameters.example }}:
+  - ${{ each exa in parameters['example'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ exa }}'
       displayName: "Add example '${{ exa }}' to check"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --examples'
-    enabled: ${{ parameters.examples }}
+    enabled: ${{ parameters['examples'] }}
     displayName: "check all examples"
 
-  - ${{ each tes in parameters.test }}:
+  - ${{ each tes in parameters['test'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ tes }}'
       displayName: "Add test '${{ tes }}' to check"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --benches'
-    enabled: ${{ parameters.benches }}
+    enabled: ${{ parameters['benches'] }}
     displayName: "check all bents"
 
-  - ${{ each ben in parameters.bench }}:
+  - ${{ each ben in parameters['bench'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --bin ${{ ben }}'
       displayName: "Add bench '${{ ben }}' to check"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --benches'
-    enabled: ${{ parameters.benches }}
+    enabled: ${{ parameters['benches'] }}
     displayName: "check all benches"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --release'
-    enabled: ${{ parameters.release }}
+    enabled: ${{ parameters['release'] }}
     displayName: "Set using release mode"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --profile ${{ parameters.profile }}'
-    enabled: ${{ ne(parameters.profile, '') }}
-    displayName: "Set profile ('${{ parameters.profile }}') to build the selected target for"
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --profile ${{ parameters['profile'] }}"
+    enabled: ${{ ne(parameters['profile'], '') }}
+    displayName: "Set profile ('${{ parameters['profile }}') to build the selected target for"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --features ${{ parameters.features }}'
-    enabled: ${{ ne(parameters.features, '') }}
-    displayName: "Space-separated list of features to activate: ${{ parameters.features }}"
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --features ${{ parameters['features'] }}"
+    enabled: ${{ ne(parameters['features'], '') }}
+    displayName: "Space-separated list of features to activate: ${{ parameters['features }}"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all-features'
     enabled: ${{ parameters['all-features'] }}
@@ -116,8 +118,8 @@ jobs:
     enabled: ${{ parameters['no-default-features'] }}
     displayName: "Do not activate the `default` feature"
 
-  - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --target ${{ parameters.target }}'
-    enabled: ${{ ne(parameters.target, '')  }}
+  - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --target ${{ parameters['target'] }}"
+    enabled: ${{ ne(parameters['target'], '')  }}
     displayName: "Check for the target triple"
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --target-dir ${{ parameters['target-dir'] }}"
@@ -151,12 +153,8 @@ jobs:
   - ${{ each z in parameters['Z'] }}:
     - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --Z ${{ z }}'
       displayName: "Add Z flag ${{ z }}"
+  # ##########################################################################################
 
-  - script: echo $(cliflags)
-
+  # Final run
   - script: cargo check $(cliflags)
-    displayName: Run Cargo check with defined flags
-     
-    #   - ${{ if parameters.benches }}:
-    #     - script: cargo check ${{variables.release }} --benches
-    #       displayName: Check benchmarks
+    displayName: Run Cargo check with defined flags 
