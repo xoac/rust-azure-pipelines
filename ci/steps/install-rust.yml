@@ -38,7 +38,7 @@ steps:
       displayName: "Adding target '${{ target }}'"
 
   # Set correct rustup_toolchain
-  - script: |
+  - bash: |
       rustup default $RUSTUP_TOOLCHAIN
       rustup update $RUSTUP_TOOLCHAIN
     env:
