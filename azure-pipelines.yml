@@ -42,10 +42,11 @@ jobs:
   parameters:
     test-flags:
       nocapture: true
-    strategy:
-      matrix:
-       Windows:
-         vmImage: vs2017-win2016
+  # Uncomment to overvrite strategy to test only on Windows
+  # strategy:
+  #   matrix:
+  #     Windows:
+  #       vmImage: vs2017-win2016
 
 
 ################
@@ -68,20 +69,20 @@ jobs:
 #     displayName: Cargo test
 #     rust_version: nightly
 # 
-# # Test cross
-# # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
-# - template: ci/cargo-cross.yml@templates
-#   parameters:
-#         name: cargo_cross
-#         displayName: Cross check and test
-#         rust_version: stable # You can specify here beta nightly or even 1.31
-#         check_targets:
-#           - i686-unknown-freebsd
-#           # - thumbv7em-none-eabihf # bare metal require no_std! future enabled.
-#         test_targets:
-#           - mips-unknown-linux-gnu
-#           - armv7-unknown-linux-musleabihf
-#           - x86_64-unknown-linux-gnu
+ # Test cross
+ # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
+ - template: ci/jobs/cargo-cross.yml@templates
+   parameters:
+     name: cargo_cross
+     displayName: Cross check and test
+     rust: stable # You can specify here beta nightly or even 1.31
+     check_targets:
+       - i686-unknown-freebsd
+       # - thumbv7em-none-eabihf # bare metal require no_std! future enabled.
+     test_targets:
+       - mips-unknown-linux-gnu
+       - armv7-unknown-linux-musleabihf
+       - x86_64-unknown-linux-gnu
 
 ###################
 #    DEPLOY PART  #
