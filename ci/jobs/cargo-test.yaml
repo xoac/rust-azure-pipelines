@@ -52,7 +52,7 @@ jobs:
     vmImage: $(vmImage)
 
   steps:
-  - template: install-rust.yml
+  - template: ../steps/install-rust.yml
     parameters:
       rust_toolchain: ${{ parameters.rust }}
 
