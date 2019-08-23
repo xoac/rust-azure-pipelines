@@ -1,5 +1,7 @@
 parameters:
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+  name: cargo_check           # Default job name
+  displayName: Cargo check    # Default displayName
 
   # parameters from `cargo check --help`
   quiet: false                # No output printed to stdout
@@ -33,8 +35,8 @@ parameters:
 
 
 jobs:
-- job: ${{ parameters['name }}
-  displayName: ${{ parameters['displayName }}
+- job: ${{ parameters['name'] }}
+  displayName: ${{ parameters['displayName'] }}
   pool:
     vmImage: ubuntu-16.04
   variables:
@@ -42,7 +44,7 @@ jobs:
   steps:
   - template: ../steps/install-rust.yml
     parameters:
-      rustup_toolchain: ${{ parameters['rust }}
+      rustup_toolchain: ${{ parameters['rust'] }}
  
   # ##########################################################################################
   # Order of script modifying `cliflags` is the same as in paramters.
@@ -104,11 +106,11 @@ jobs:
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --profile ${{ parameters['profile'] }}"
     enabled: ${{ ne(parameters['profile'], '') }}
-    displayName: "Set profile ('${{ parameters['profile }}') to build the selected target for"
+    displayName: "Set profile ('${{ parameters['profile'] }}') to build the selected target for"
 
   - script: echo "##vso[task.setvariable variable=cliflags]$(cliflags) --features ${{ parameters['features'] }}"
     enabled: ${{ ne(parameters['features'], '') }}
-    displayName: "Space-separated list of features to activate: ${{ parameters['features }}"
+    displayName: "Space-separated list of features to activate: ${{ parameters['features'] }}"
 
   - script: echo '##vso[task.setvariable variable=cliflags]$(cliflags) --all-features'
     enabled: ${{ parameters['all-features'] }}

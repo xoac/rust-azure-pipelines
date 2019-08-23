@@ -25,6 +25,9 @@ jobs:
     displayName: Cargo check nightly
     rust: nightly
 
+# Check formating
+- template: ci/jobs/rustfmt.yml@templates
+
 ################
 # Test stage   #
 ###############
