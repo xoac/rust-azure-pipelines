@@ -37,6 +37,12 @@ jobs:
   parameters:
     all: true
 
+# Cargo test
+- template: ci/jobs/cargo-test.yaml@templates
+  parameters:
+    test-args:
+      nocapture: true
+
 ################
 # Test stage   #
 ###############
