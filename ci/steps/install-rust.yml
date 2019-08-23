@@ -3,9 +3,7 @@ parameters:
   rustup_toolchain: stable      # Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
   components: []                # Rust commponents to be installed
   targets: []                   # Rust targets to be installed
-  steps:                        # Custom steps
-  - script: echo "Nothing"
-    enabled: false
+  steps: []                     # Custom steps
 
 steps:
   # Linux and macOS.
@@ -47,7 +45,7 @@ steps:
       RUSTUP_TOOLCHAIN: ${{parameters.rustup_toolchain}}
     displayName: "Set correct Rust version"
 
-  ${{ parameters.steps }}
+  - ${{ parameters.steps }}
 
   # All platforms.
   - script: |

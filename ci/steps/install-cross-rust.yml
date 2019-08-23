@@ -1,19 +1,20 @@
 parameters:
   rust_toolchain: stable
 
-template: install-rust.yaml
-parameters:
-  rust_toolchain: ${{ parameters.rust_toolchain }}
-  steps:
-    # TEMPORATY FIX UNTIL https://github.com/rust-embedded/cross/pull/169 merged.
-    - script: |
-              git config --global user.email "not_necessery@dont.needed"
-              git config --global user.name "I am the merger one"
-              git clone https://github.com/rust-embedded/cross
-              cd cross
-              git remote add pitkley https://github.com/pitkley/cross
-              git fetch pitkley
-              git checkout 718a19c
-              git merge -m "No pseudo tty" pitkley/docker-no-pseudo-tty
-              cargo install --force --path .
-      displayName: Instaling cross support
+steps:
+  - template: install-rust.yml
+    parameters:
+      rust_toolchain: ${{ parameters.rust_toolchain }}
+      steps:
+      # TEMPORATY FIX UNTIL https://github.com/rust-embedded/cross/pull/169 merged.
+      - script: |
+          git config --global user.email "not_necessery@dont.needed"
+          git config --global user.name "I am the merger one"
+          git clone https://github.com/rust-embedded/cross
+          cd cross
+          git remote add pitkley https://github.com/pitkley/cross
+          git fetch pitkley
+          git checkout 718a19c
+          git merge -m "No pseudo tty" pitkley/docker-no-pseudo-tty
+          cargo install --force --path .
+        displayName: Instaling cross support

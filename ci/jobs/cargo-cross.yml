@@ -2,7 +2,7 @@
 
 parameters:
   rust_version: stable
-  check_target: []
+  check_targets: []
   test_targets: []
 
 jobs:
@@ -13,17 +13,16 @@ jobs:
   steps:
     - template: ../steps/install-cross-rust.yml
 
-    - script:
-      cross --version
-      displayName: "prinitng cross version"
+    - script: cross --version
+      displayName: prinitng cross version
 
     # Checking all targets
     - ${{ each check_target in parameters.check_targets }}:
-        - script: cargo clean
-        - script: cross check --target  ${{ check_target }}
+      - script: cargo clean
+      - script: cross check --target ${{ check_target }}
 
     # Testing targets
     - ${{ each test_target in parameters.test_targets }}:
-       - script: cross test --target  ${{ test_target }}
-       - script: cargo clean
+      - script: cross test --target ${{ test_target }}
+      - script: cargo clean
 
