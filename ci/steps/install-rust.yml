@@ -3,7 +3,7 @@ parameters:
   rustup_toolchain: stable      # Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
   components: []                # Rust commponents to be installed
   targets: []                   # Rust targets to be installed
-  steps: []                     # Custom steps
+  steps:                        # Custom steps
 
 steps:
   # Linux and macOS.
