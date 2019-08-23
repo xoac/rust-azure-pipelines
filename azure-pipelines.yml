@@ -18,15 +18,24 @@ jobs:
   parameters:
     name: check_stable
     displayName: Cargo check stable
+    rust: stable
+    all: true
+    benches: true
 
 - template: ci/jobs/cargo-check.yml@templates
   parameters:
     name: check_nightly
     displayName: Cargo check nightly
     rust: nightly
+    all: true
 
 # Check formating
 - template: ci/jobs/rustfmt.yml@templates
+
+# Clippy
+- template: ci/jobs/cargo-clippy.yml@templates
+  parameters:
+    all: true
 
 ################
 # Test stage   #

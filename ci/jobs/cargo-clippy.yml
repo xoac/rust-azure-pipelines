@@ -1,9 +1,15 @@
 parameters:
-  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
-  name: cargo_check           # Default job name
-  displayName: Cargo check    # Default displayName
+  rust: stable                # Version of rust. For example [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+  displayName: Cargo clippy   # Default displayName
+  name: cargo_clippy          # Default job name
 
-  # parameters from `cargo check --help`
+  # parameters for cargo clippy --help
+  warn: []                    # Set lint warnings
+  allow: []                   # Set lint allowed
+  deny: []                    # Set lint denied
+  forbid: []                  # Set lint forbidden
+
+  # the copy of parameters from `cargo check` as suggest `cargo clippy --help`
   quiet: false                # No output printed to stdout
   package: []                 # Package(s) to check
   all: false                  # Check all packages in the workspace
@@ -35,17 +41,36 @@ parameters:
 
 
 jobs:
-- job: ${{ parameters['name'] }}
-  displayName: ${{ parameters['displayName'] }}
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
   pool:
     vmImage: ubuntu-16.04
   variables:
+    clippy_flags: ''
     check_flags: ''
   steps:
   - template: ../steps/install-rust.yml
     parameters:
-      rustup_toolchain: ${{ parameters['rust'] }}
- 
+      rust_toolchain: ${{ parameters.rust }}
+      components:
+        - clippy
+
+  - ${{ each w in parameters['warn'] }}:
+    - script: echo '##vso[task.setvariable variable=clippy_flags]$(clippy_flags) --warn ${{ w }}'
+      displayName: "Add warning lint: ${{ w }}"
+
+  - ${{ each a in parameters['allow'] }}:
+    - script: echo '##vso[task.setvariable variable=clippy_flags]$(clippy_flags) --allow ${{ a }}'
+      displayName: "Add lint allowed: ${{ a }}"
+
+  - ${{ each w in parameters['deny'] }}:
+    - script: echo '##vso[task.setvariable variable=clippy_flags]$(clippy_flags) --deny ${{ d }}'
+      displayName: "Add lint denied: ${{ d }}"
+
+  - ${{ each f in parameters['forbid'] }}:
+    - script: echo '##vso[task.setvariable variable=clippy_flags]$(clippy_flags) --forbid ${{ f }}'
+      displayName: "Add lint forbidden: ${{ f }}"
+
   # ##########################################################################################
   # Order of script modifying `check_flags` is the same as in paramters.
   - script: echo '##vso[task.setvariable variable=check_flags]$(check_flags) --quiet'
@@ -157,6 +182,5 @@ jobs:
       displayName: "Add Z flag ${{ z }}"
   # ##########################################################################################
 
-  # Final run
-  - script: cargo check $(check_flags)
-    displayName: Run Cargo check with defined flags 
+  - script: cargo clippy $(check_flags) -- $(clippy_flags) 
+    displayName: Run clippy with custom flags

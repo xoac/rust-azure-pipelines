@@ -1,7 +1,7 @@
 parameters:
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 0.31, nightly-2018-08-01 ... ]
   name: rustfmt               # Default job name
-  displayName: Check rustfmt  # Default displayName
+  displayName: Format check   # Default displayName
 
   # parameters from `cargo fmt --help`
   all: true                   # format all packages (only usable in workspaces)
