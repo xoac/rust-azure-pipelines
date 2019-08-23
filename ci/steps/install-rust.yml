@@ -29,7 +29,7 @@ steps:
   # Install additional components:
   - ${{ each component in parameters.components }}:
     - script: rustup component add ${{ component }}
-    - displayName: "Adding commponent ${{ component }}"
+      displayName: "Adding commponent ${{ component }}"
 
   # Install additional targets:
   - ${{ each target in parameters.targets }}:
