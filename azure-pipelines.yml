@@ -42,6 +42,11 @@ jobs:
   parameters:
     test-flags:
       nocapture: true
+    strategy:
+      matrix:
+       Windows:
+         vmImage: vs2017-win2016
+
 
 ################
 # Test stage   #
