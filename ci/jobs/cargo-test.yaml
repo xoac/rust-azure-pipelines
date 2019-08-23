@@ -1,7 +1,7 @@
 parameters:
   rust: stable
   name: cargo_test
-  displayName Cargo test
+  displayName: Cargo test
 
   # parameters from `cargo test --help`
   # TODO
