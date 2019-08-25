@@ -1,0 +1,41 @@
+parameters:
+  min_rust_supported: 1.31  # First version of Rust 2018 edition
+
+jobs:
+- template: cargo-check.yml
+  parameters:
+    name: check_stable
+    displayName: Cargo check (stable)
+    all: true
+    benches: true
+
+- template: cargo-check.yml
+  parameters:
+    name: check_nightly
+    displayName: Cargo check (nightly)
+    rust: nightly
+    all: true
+    benches: true
+
+# Check formating
+- template: rustfmt.yml
+
+# Cargo test min rust version
+- template: cargo-test.yaml
+  parameters:
+    name: cargo_test_min_ver
+    displayName: Test min supported version
+    test-flags: 
+      nocapture: true
+    rust: ${{ parameters['min_rust_supported'] }}
+
+# Cargo test last stable version of rust
+- template: cargo-test.yaml
+  parameters:
+    test-flags:
+      nocapture: true
+
+# Clippy
+- template: cargo-clippy.yml
+  parameters:
+    all: true

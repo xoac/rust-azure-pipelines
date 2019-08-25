@@ -1,3 +1,6 @@
+# Supported targets: https://github.com/rust-embedded/cross#supported-targets
+# Configuration      https://github.com/rust-embedded/cross#configuration
+
 parameters:
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
   name: cross_check           # Default job name

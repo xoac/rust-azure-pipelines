@@ -1,0 +1,22 @@
+parameters:
+  checks: []
+  tests: []
+
+# Cross check
+# List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
+jobs:
+- ${{ each check in parameters['checks'] }}:
+  - template: cross-check.yml
+    parameters:
+      name: cargo_check_${{ check.name }}
+      displayName: Check target ${{ check.target }} (cross)
+      target: ${{ check.target }}
+
+# Cross test 
+# List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
+- ${{ each test in parameters['tests'] }}:
+  - template: cross-test.yml
+    parameters:
+      name: cargo_test_${{ test.name }}
+      displayName: Test target ${{ test.target }} (cross)
+      target: ${{ test.target }}

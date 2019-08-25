@@ -13,41 +13,20 @@ resources:
       endpoint: PipelinesTemplates
 
 jobs:
-# Cargo check
-- template: ci/jobs/cargo-check.yml@templates
+- template: ci/jobs/default-setup.yml@templates
   parameters:
-    name: check_stable
-    displayName: Cargo check stable
-    rust: stable
-    all: true
-    benches: true
+    min_rust_supported: 1.31
 
-- template: ci/jobs/cargo-check.yml@templates
+- template: ci/jobs/default-embeeded.yml@templates
   parameters:
-    name: check_nightly
-    displayName: Cargo check nightly
-    rust: nightly
-    all: true
-
-# Check formating
-- template: ci/jobs/rustfmt.yml@templates
-
-# Clippy
-- template: ci/jobs/cargo-clippy.yml@templates
-  parameters:
-    all: true
-
-# Cargo test
-- template: ci/jobs/cargo-test.yaml@templates
-  parameters:
-    test-flags:
-      nocapture: true
-  # Uncomment to overvrite strategy to test only on Windows
-  # strategy:
-  #   matrix:
-  #     Windows:
-  #       vmImage: vs2017-win2016
-
+    checks:
+      - target: i686-unknown-freebsd
+        name: cross_chcek_i686_unknown_freebsd 
+      - target: aarch64-unknown-linux-gnu
+        name: cross_check_aarch64_unknown_linux_gnu
+    tests:
+      - target: i686-unknown-linux-gnu
+        name: cross_test_i686_unknown_linux_gnu
 
 ################
 # Test stage   #
@@ -69,11 +48,6 @@ jobs:
 #     displayName: Cargo test
 #     rust_version: nightly
 # 
- # Test cross
- # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
-- template: ci/jobs/cross-check.yml@templates
-  parameters:
-   target: i686-unknown-freebsd
 
 ###################
 #    DEPLOY PART  #
