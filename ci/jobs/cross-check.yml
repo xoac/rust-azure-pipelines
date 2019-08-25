@@ -2,9 +2,15 @@
 # Configuration      https://github.com/rust-embedded/cross#configuration
 
 parameters:
-  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+  # azure pipelines paramters
   name: cross_check           # Default job name
   displayName: Cross check    # Default displayName
+  dependsOn: []
+  condition: true
+  steps: []                   # Custom steps on the end
+
+  # parameters to pass to task
+  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
 
   # parameters from `cargo check --help`
   quiet: false                # No output printed to stdout
@@ -40,6 +46,8 @@ parameters:
 jobs:
 - job: ${{ parameters['name'] }}
   displayName: ${{ parameters['displayName'] }}
+  condition: ${{ parameters['condition'] }}
+  dependsOn: ${{ parameters['dependsOn'] }}
   pool:
     vmImage: ubuntu-16.04
   variables:
@@ -159,3 +167,8 @@ jobs:
   # Final run
   - script: cross check $(check_flags)
     displayName: Run cross check with defined flags 
+
+  # Custom steps:
+  - ${{ if parameters['steps'] }}:
+    - ${{ parameters['steps'] }}
+

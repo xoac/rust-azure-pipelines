@@ -4,15 +4,17 @@ parameters:
 jobs:
 - template: cargo-check.yml
   parameters:
-    name: check_stable
-    displayName: Cargo check (stable)
+    azure:
+      name: check_stable
+      displayName: Cargo check (stable)
     all: true
     benches: true
 
 - template: cargo-check.yml
   parameters:
-    name: check_nightly
-    displayName: Cargo check (nightly)
+    azure:
+      name: check_nightly
+      displayName: Cargo check (nightly)
     rust: nightly
     all: true
     benches: true
@@ -23,8 +25,9 @@ jobs:
 # Cargo test min rust version
 - template: cargo-test.yaml
   parameters:
-    name: cargo_test_min_ver
-    displayName: Test min supported version
+    azure:
+      name: cargo_test_min_ver
+      displayName: Test min supported version
     test-flags: 
       nocapture: true
     rust: ${{ parameters['min_rust_supported'] }}

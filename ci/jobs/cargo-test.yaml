@@ -1,7 +1,24 @@
 parameters:
-  rust: stable
-  name: cargo_test
-  displayName: Cargo test
+  # azure pipelines paramters
+  default_azure:
+    name: cargo_test              # Default job name
+    displayName: Cargo test       # Default displayName
+    dependsOn: []                 # Dependencies to for the job to start
+    condition: true               # Job condition
+    steps: []                     # Custom steps added on the end
+    strategy:                     # Default strategy to test on Windows, MacOs and Linux.
+      matrix:
+       Linux:
+         vmImage: ubuntu-16.04
+       MacOS:
+         vmImage: macOS-10.13
+       Windows:
+         vmImage: vs2017-win2016
+
+  azure:
+    ${{ insert }}: ${{ parameters.default_azure }}
+  # global parameters
+  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
 
   # parameters from `cargo test --help`
   # TODO
@@ -35,24 +52,17 @@ parameters:
     Z: []                       # unstable-options Enable nightly-only flags: unstable-options = Allow
                                 # use of experimental features
 
-  strategy:                       # Default strategy to test on Windows, MacOs and Linux.
-   matrix:
-     Linux:
-       vmImage: ubuntu-16.04
-     MacOS:
-       vmImage: macOS-10.13
-     Windows:
-       vmImage: vs2017-win2016
 
 jobs:
-- job: ${{ parameters.name }}
-  displayName: ${{ parameters.displayName }}
-  strategy: ${{ parameters.strategy }}
+- job: ${{ parameters.azure['name'] }}
+  displayName: ${{ parameters.azure['displayName'] }}
+  condition: ${{ parameters.azure['condition'] }}
+  dependsOn: ${{ parameters.azure['dependsOn'] }}
+  strategy: ${{ parameters.azure.strategy }}
   pool:
     vmImage: $(vmImage)
   variables:
     check_flags: ''
-
   steps:
   - template: ../steps/install-rust.yml
     parameters:
@@ -124,3 +134,8 @@ jobs:
   # *********************************************************************************************
   - script: cargo test -- $(check_flags)
     displayName: cargo test
+    
+  # Custom steps:
+  - ${{ if parameters['steps'] }}:
+    - ${{ parameters['steps'] }}
+
