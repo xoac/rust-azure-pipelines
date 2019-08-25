@@ -28,45 +28,24 @@ jobs:
       - target: i686-unknown-linux-gnu
         name: cross_test_i686_unknown_linux_gnu
 
-################
-# Test stage   #
-###############
-
-# Test stable
-# - template: ci/test.yml@templates
-#   parameters:
-#     dependsOn:
-#       - cargo_check
-#     name: cargo_test_stable
-#     displayName: Cargo test
-#     cross: true # Test on Windows and macOS
-# 
-# # Test nightly
-# - template: ci/test.yml@templates
-#   parameters:
-#     name: cargo_test_nightly
-#     displayName: Cargo test
-#     rust_version: nightly
-# 
-
 ###################
 #    DEPLOY PART  #
 ###################
 # TODO you need to modify git parameters and specify variable in pipeline. See [README.md](https://github.com/xoac/rust-azure-pipelines/blob/master/README.md)
 
 # Deploy doc
-# - template: ci/github-deploy-doc.yml@templates
-#   parameters:
-#     name: github_deploy_doc
-#     dependsOn:
-#       - cargo_test_stable
-#       - cargo_check
-#       - cargo_cross
-#     github:
-#      user: xoac
-#      email: sylwesterrapala@outlook.com
-#      repo: https://github.com/xoac/rust-azure-pipelines/
-# 
+- template: ci/jobs/github/deploy-doc.yml@templates
+  parameters:
+   branch: develop
+   name: github_deploy_doc
+   dependsOn:
+     - cargo_test
+     - cargo_test_min_ver
+   github:
+    user: xoac
+    email: sylwesterrapala@outlook.com
+    repo: https://github.com/xoac/rust-azure-pipelines/
+ 
 # # Release binary
 # - template: ci/github-release.yml@templates
 #   parameters:
