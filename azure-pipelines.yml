@@ -71,18 +71,9 @@ jobs:
 # 
  # Test cross
  # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
-- template: ci/jobs/cargo-cross.yml@templates
+- template: ci/jobs/cross-check.yml@templates
   parameters:
-   name: cargo_cross
-   displayName: Cross check and test
-   rust: stable # You can specify here beta nightly or even 1.31
-   check_targets:
-     - i686-unknown-freebsd
-     # - thumbv7em-none-eabihf # bare metal require no_std! future enabled.
-   test_targets:
-     - mips-unknown-linux-gnu
-     - armv7-unknown-linux-musleabihf
-     - x86_64-unknown-linux-gnu
+   target: i686-unknown-freebsd
 
 ###################
 #    DEPLOY PART  #
