@@ -1,42 +1,57 @@
 parameters:
-  name: github_deploy_doc
+  # azure pipelines paramters
+  job_name: github_deploy_doc           # Default job name
+  job_displayName: Deply doc to Github  # Default displayName
+  job_dependsOn: []                     # Dependencies to for the job to start
+  job_condition: null                   # Job condition
+  job_post-steps: []                    # Custom steps running after job
+
   branch: master   # Branch on witch documentaion is generated.
-  dependsOn: []    # Jobs names that need to be done before this
   github:
     user: OverwriteItWithYouGithubUsername
     repo: OverwriteWithYouGithubRepository
     email: OverwriteWithYourGithubEmail
 
 jobs:
-  - template: ../cargo-doc.yml
-    parameters:
-      all: true
-      no-deps: true
-
+- template: ../cargo-doc.yml
+  parameters:
+    job_name: ${{ parameters['job_name'] }}
+    displayName: ${{ parameters['job_displayName'] }}
+    ${{ if eq(parameters['job_condition'], '') }}:
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.branch }}'))
-      dependsOn: ${{ parameters.dependsOn }}
-      steps:
-        - script: |
-            cp -R target/doc '$(Build.BinariesDirectory)'
-          displayName: Copy generated documentaion to build directory
+    ${{ if ne(parameters['job_condition'], '') }}:
+      condition: ${{ parameters['job_condition'] }}
+    dependsOn: ${{ parameters['job_dependsOn'] }}
+    
+    all: true
+    no-deps: true
 
-        - script: |
-            set -e
-            git --version
-            ls -la
-            git init
-            git config user.name 'Deployment Bot (from Azure Pipelines)'
-            git config user.email '${{ parameters.github.email }}'
-            git config --global credential.helper 'store --file ~/.my-credentials'
-            printf "protocol=https\nhost=github.com\nusername=$USER\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
-            git remote add origin ${{ parameters.github.repo }}
-            git checkout -b gh-pages
-            git add .
-            git commit -m 'Deploy API documentation'
-            git push -f origin gh-pages
-          env:
-            GITHUB_TOKEN: $(DocPublishToken)
-            USER: ${{ parameters.github.user }}
-          workingDirectory: '$(Build.BinariesDirectory)'
-          displayName: 'Deploy Documentation'
+    steps:
+    - script: |
+        cp -R target/doc '$(Build.BinariesDirectory)'
+      displayName: Copy generated documentaion to build directory
+
+    - script: |
+        set -e
+        git --version
+        ls -la
+        git init
+        git config user.name 'Deployment Bot (from Azure Pipelines)'
+        git config user.email '${{ parameters.github.email }}'
+        git config --global credential.helper 'store --file ~/.my-credentials'
+        printf "protocol=https\nhost=github.com\nusername=$USER\npassword=%s\n\n" "$GITHUB_TOKEN" | git credential-store --file ~/.my-credentials store
+        git remote add origin ${{ parameters.github.repo }}
+        git checkout -b gh-pages
+        git add .
+        git commit -m 'Deploy API documentation'
+        git push -f origin gh-pages
+      env:
+        GITHUB_TOKEN: $(DocPublishToken)
+        USER: ${{ parameters.github.user }}
+      workingDirectory: '$(Build.BinariesDirectory)'
+      displayName: 'Deploy Documentation'
+      
+    - ${{ if parameters['job_post-steps'] }}:
+      - ${{ parameters['job_post-steps'] }}
+
 

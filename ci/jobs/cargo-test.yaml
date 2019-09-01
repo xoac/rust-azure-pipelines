@@ -1,22 +1,17 @@
 parameters:
-  # azure pipelines paramters
-  default_azure:
-    name: cargo_test              # Default job name
-    displayName: Cargo test       # Default displayName
-    dependsOn: []                 # Dependencies to for the job to start
-    condition: true               # Job condition
-    steps: []                     # Custom steps added on the end
-    strategy:                     # Default strategy to test on Windows, MacOs and Linux.
-      matrix:
-       Linux:
-         vmImage: ubuntu-16.04
-       MacOS:
-         vmImage: macOS-10.13
-       Windows:
-         vmImage: vs2017-win2016
-
-  azure:
-    ${{ insert }}: ${{ parameters.default_azure }}
+  job_name: cargo_test              # Default job name
+  job_displayName: Cargo test       # Default displayName
+  job_dependsOn: []                 # Dependencies to for the job to start
+  job_condition: true               # Job condition
+  job_post-steps: []                # Custom steps running after job
+  job_strategy:                     # Default strategy to test on Windows, MacOs and Linux.
+    matrix:
+      Linux:
+        vmImage: ubuntu-16.04
+      MacOS:
+        vmImage: macOS-10.13
+      Windows:
+        vmImage: vs2017-win2016
   # global parameters
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
 
@@ -54,11 +49,11 @@ parameters:
 
 
 jobs:
-- job: ${{ parameters.azure['name'] }}
-  displayName: ${{ parameters.azure['displayName'] }}
-  condition: ${{ parameters.azure['condition'] }}
-  dependsOn: ${{ parameters.azure['dependsOn'] }}
-  strategy: ${{ parameters.azure.strategy }}
+- job: ${{ parameters['job_name'] }}
+  displayName: ${{ parameters['job_displayName'] }}
+  condition: ${{ parameters['job_condition'] }}
+  dependsOn: ${{ parameters['job_dependsOn'] }}
+  strategy: ${{ parameters['job_strategy'] }}
   pool:
     vmImage: $(vmImage)
   variables:
@@ -136,6 +131,6 @@ jobs:
     displayName: cargo test
     
   # Custom steps:
-  - ${{ if parameters['steps'] }}:
-    - ${{ parameters['steps'] }}
+  - ${{ if parameters['job_post-steps'] }}:
+    - ${{ parameters['job_post-steps'] }}
 

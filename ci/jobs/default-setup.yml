@@ -4,17 +4,17 @@ parameters:
 jobs:
 - template: cargo-check.yml
   parameters:
-    azure:
-      name: check_stable
-      displayName: Cargo check (stable)
+    job_name: check_stable
+    job_displayName: Cargo check (stable)
     all: true
     benches: true
 
 - template: cargo-check.yml
   parameters:
-    azure:
-      name: check_nightly
-      displayName: Cargo check (nightly)
+    # all azure job parameters start with `job_` prefix
+    job_name: check_nightly
+    job_displayName: Cargo check (nightly)
+    # parameters from running program are with the same name without any prefix
     rust: nightly
     all: true
     benches: true
@@ -25,9 +25,8 @@ jobs:
 # Cargo test min rust version
 - template: cargo-test.yaml
   parameters:
-    azure:
-      name: cargo_test_min_ver
-      displayName: Test min supported version
+    job_name: cargo_test_min_ver
+    job_displayName: Test min supported version
     test-flags: 
       nocapture: true
     rust: ${{ parameters['min_rust_supported'] }}

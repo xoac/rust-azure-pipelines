@@ -1,11 +1,10 @@
 parameters:
   # azure pipelines paramters
-  azure:
-    name: cargo_check             # Default job name
-    displayName: Cargo check      # Default displayName
-    dependsOn: []                 # Dependencies to for the job to start
-    condition: true               # Job condition
-    steps: []                     # Custom steps added on the end
+  job_name: cargo_check             # Default job name
+  job_displayName: Cargo check      # Default displayName
+  job_dependsOn: []                 # Dependencies to for the job to start
+  job_condition: true               # Job condition
+  job_post-steps: []                # Custom steps running after job
 
   # global parameters
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
@@ -41,10 +40,10 @@ parameters:
   Z: []                       # Unstable (nightly-only) flags to Cargo, see 'cargo -Z help' for details
 
 jobs:
-- job: ${{ parameters.azure['name'] }}
-  displayName: ${{ parameters.azure['displayName'] }}
-  condition: ${{ parameters.azure['condition'] }}
-  dependsOn: ${{ parameters.azure['dependsOn'] }}
+- job: ${{ parameters['job_name'] }}
+  displayName: ${{ parameters['job_displayName'] }}
+  condition: ${{ parameters['job_condition'] }}
+  dependsOn: ${{ parameters['job_dependsOn'] }}
   pool:
     vmImage: ubuntu-16.04
   variables:
@@ -166,6 +165,6 @@ jobs:
     displayName: Run Cargo check with defined flags 
 
   # Custom steps:
-  - ${{ if parameters['steps'] }}:
-    - ${{ parameters['steps'] }}
+  - ${{ if parameters['job_post-steps'] }}:
+    - ${{ parameters['job_post-steps'] }}
 

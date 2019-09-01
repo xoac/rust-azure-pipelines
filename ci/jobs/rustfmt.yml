@@ -1,11 +1,10 @@
 parameters:
   # azure pipelines paramters
-  azure:
-    name: rustfmt                       # Default job name
-    displayName: Generate doc           # Default displayName
-    dependsOn: []                       # Dependencies to for the job to start
-    condition: true                     # Job condition
-    steps: []                           # Custom steps added on the end
+  job_name: rustfmt                 # Default job name
+  job_displayName: Check formatting # Default displayName
+  job_dependsOn: []                 # Dependencies to for the job to start
+  job_condition: true               # Job condition
+  job_post-steps: []                # Custom steps running after job
 
   # global parameters
   rust: stable                          # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
@@ -33,59 +32,59 @@ parameters:
                                          # for formatting the current program.
 
 jobs:
-- job: ${{ parameters.azure['name'] }}
-  displayName: ${{ parameters.azure['displayName'] }}
-  condition: ${{ parameters.azure['condition'] }}
-  dependsOn: ${{ parameters.azure['dependsOn'] }}
+- job: ${{ parameters['job_name'] }}
+  displayName: ${{ parameters['job_displayName'] }}
+  condition: ${{ parameters['job_condition'] }}
+  dependsOn: ${{ parameters['job_dependsOn'] }}
   pool:
     vmImage: ubuntu-16.04
   variables:
     fmt_flags: ''
     rustfmt_flags: ''
   steps:
-    - template: ../steps/install-rust.yml
-      parameters:
-        rust_toolchain: ${{ parameters.rust }}
-        components:
-          - rustfmt
+  - template: ../steps/install-rust.yml
+    parameters:
+      rust_toolchain: ${{ parameters.rust }}
+      components:
+        - rustfmt
 
-    - script: echo "##vso[task.setvariable variable=fmt_flags]$(fmt_flags) --all"
-      enabled: ${{ parameters['all'] }}
-      displayName: "format all packages (only usable in workspaces)"
+  - script: echo "##vso[task.setvariable variable=fmt_flags]$(fmt_flags) --all"
+    enabled: ${{ parameters['all'] }}
+    displayName: "format all packages (only usable in workspaces)"
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --check"
-      enabled: ${{ parameters['check'] }}
-      displayName: "Run in 'check' mode."
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --check"
+    enabled: ${{ parameters['check'] }}
+    displayName: "Run in 'check' mode."
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --emit ${{ parameters['emit'] }}"
-      enabled: ${{ ne(parameters['emit'], '')  }}
-      displayName: "Set what data to emit and how to ${{ parameters['emit'] }}"
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --emit ${{ parameters['emit'] }}"
+    enabled: ${{ ne(parameters['emit'], '')  }}
+    displayName: "Set what data to emit and how to ${{ parameters['emit'] }}"
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --backup"
-      enabled: ${{ parameters['backup'] }}
-      displayName: "Backup any modified files."
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --backup"
+    enabled: ${{ parameters['backup'] }}
+    displayName: "Backup any modified files."
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --config-path ${{ parameters['config-path'] }}"
-      enabled: ${{ ne(parameters['config-path'], '')  }}
-      displayName: "Path for the configuration file (rustfmt.toml) ${{ parameters['config-path'] }}"
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --config-path ${{ parameters['config-path'] }}"
+    enabled: ${{ ne(parameters['config-path'], '')  }}
+    displayName: "Path for the configuration file (rustfmt.toml) ${{ parameters['config-path'] }}"
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --edition ${{ parameters['edition'] }}"
-      enabled: ${{ ne(parameters['edition'], '')  }}
-      displayName: "Set rust edition to: ${{ parameters['edition'] }}"
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --edition ${{ parameters['edition'] }}"
+    enabled: ${{ ne(parameters['edition'], '')  }}
+    displayName: "Set rust edition to: ${{ parameters['edition'] }}"
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --color ${{ parameters['color'] }}"
-      enabled: ${{ ne(parameters['color'], '')  }}
-      displayName: "Use colored output ${{ parameters['color'] }}"
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --color ${{ parameters['color'] }}"
+    enabled: ${{ ne(parameters['color'], '')  }}
+    displayName: "Use colored output ${{ parameters['color'] }}"
 
-    - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --print-config ${{ parameters['print-config'] }}"
-      enabled: ${{ ne(parameters['print-config'], '')  }}
-      displayName: "Dump config: ${{ parameters['color'] }}"
+  - script: echo "##vso[task.setvariable variable=rustfmt_flags]$(rustfmt_flags) --print-config ${{ parameters['print-config'] }}"
+    enabled: ${{ ne(parameters['print-config'], '')  }}
+    displayName: "Dump config: ${{ parameters['color'] }}"
 
-    - script: |
-        cargo fmt $(fmt_flags) -- $(rustfmt_flags)
-      displayName: Check formatting
+  - script: |
+      cargo fmt $(fmt_flags) -- $(rustfmt_flags)
+    displayName: Check formatting
 
-    # Custom steps:
-    - ${{ if parameters['steps'] }}:
-      - ${{ parameters['steps'] }}
+  # Custom steps:
+  - ${{ if parameters['job_post-steps'] }}:
+    - ${{ parameters['job_post-steps'] }}
 

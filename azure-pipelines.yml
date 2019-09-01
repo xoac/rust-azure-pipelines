@@ -20,7 +20,7 @@ jobs:
 - template: ci/jobs/default-embeeded.yml@templates
   parameters:
     checks:
-      - target: i686-unknown-freebsd
+      - target: mips-unknown-linux-musl
         name: cross_chcek_i686_unknown_freebsd 
       - target: aarch64-unknown-linux-gnu
         name: cross_check_aarch64_unknown_linux_gnu
@@ -37,8 +37,8 @@ jobs:
 - template: ci/jobs/github/deploy-doc.yml@templates
   parameters:
    branch: develop
-   name: github_deploy_doc
-   dependsOn:
+   job_name: github_deploy_doc
+   job_dependsOn:
      - cargo_test
      - cargo_test_min_ver
    github:
