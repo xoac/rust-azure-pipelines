@@ -6,7 +6,7 @@ parameters:
 # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
 jobs:
 - ${{ each check in parameters['checks'] }}:
-  - template: cross-check.yml
+  - template: ../jobs/cross-check.yml
     parameters:
       job_name: cargo_check_${{ check.name }}
       job_displayName: Check target ${{ check.target }} (cross)
@@ -15,7 +15,7 @@ jobs:
 # Cross test 
 # List of supported targets is available here: https://github.com/rust-embedded/cross#supported-targets
 - ${{ each test in parameters['tests'] }}:
-  - template: cross-test.yml
+  - template: ../jobs/cross-test.yml
     parameters:
       job_name: cargo_test_${{ test.name }}
       job_displayName: Test target ${{ test.target }} (cross)

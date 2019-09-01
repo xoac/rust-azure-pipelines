@@ -3,7 +3,7 @@ parameters:
   job_name: github_deploy_doc           # Default job name
   job_displayName: Deply doc to Github  # Default displayName
   job_dependsOn: []                     # Dependencies to for the job to start
-  job_condition: null                   # Job condition
+  job_condition: 'null'                 # Job condition
   job_post-steps: []                    # Custom steps running after job
 
   branch: master   # Branch on witch documentaion is generated.
@@ -13,13 +13,13 @@ parameters:
     email: OverwriteWithYourGithubEmail
 
 jobs:
-- template: ../cargo-doc.yml
+- template: ../../jobs/cargo-doc.yml
   parameters:
     job_name: ${{ parameters['job_name'] }}
     displayName: ${{ parameters['job_displayName'] }}
-    ${{ if eq(parameters['job_condition'], '') }}:
+    ${{ if eq(parameters['job_condition'], 'null') }}:
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.branch }}'))
-    ${{ if ne(parameters['job_condition'], '') }}:
+    ${{ if ne(parameters['job_condition'], 'null') }}:
       condition: ${{ parameters['job_condition'] }}
     dependsOn: ${{ parameters['job_dependsOn'] }}
     

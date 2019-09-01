@@ -2,14 +2,14 @@ parameters:
   min_rust_supported: 1.31  # First version of Rust 2018 edition
 
 jobs:
-- template: cargo-check.yml
+- template: ../jobs/cargo-check.yml
   parameters:
     job_name: check_stable
     job_displayName: Cargo check (stable)
     all: true
     benches: true
 
-- template: cargo-check.yml
+- template: ../jobs/cargo-check.yml
   parameters:
     # all azure job parameters start with `job_` prefix
     job_name: check_nightly
@@ -20,10 +20,10 @@ jobs:
     benches: true
 
 # Check formating
-- template: rustfmt.yml
+- template: ../jobs/rustfmt.yml
 
 # Cargo test min rust version
-- template: cargo-test.yaml
+- template: ../jobs/cargo-test.yaml
   parameters:
     job_name: cargo_test_min_ver
     job_displayName: Test min supported version
@@ -32,12 +32,12 @@ jobs:
     rust: ${{ parameters['min_rust_supported'] }}
 
 # Cargo test last stable version of rust
-- template: cargo-test.yaml
+- template: ../jobs/cargo-test.yaml
   parameters:
     test-flags:
       nocapture: true
 
 # Clippy
-- template: cargo-clippy.yml
+- template: ../jobs/cargo-clippy.yml
   parameters:
     all: true

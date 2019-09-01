@@ -13,11 +13,11 @@ resources:
       endpoint: PipelinesTemplates
 
 jobs:
-- template: ci/jobs/default-setup.yml@templates
+- template: ci/scenarios/standard.yml@templates
   parameters:
     min_rust_supported: 1.31
 
-- template: ci/jobs/default-embeeded.yml@templates
+- template: ci/scenarios/embeeded.yml@templates
   parameters:
     checks:
       - target: mips-unknown-linux-musl
@@ -34,10 +34,11 @@ jobs:
 # TODO you need to modify git parameters and specify variable in pipeline. See [README.md](https://github.com/xoac/rust-azure-pipelines/blob/master/README.md)
 
 # Deploy doc
-- template: ci/jobs/github/deploy-doc.yml@templates
+- template: ci/scenarios/github/deploy-doc.yml@templates
   parameters:
    branch: develop
    job_name: github_deploy_doc
+   job_condition: false
    job_dependsOn:
      - cargo_test
      - cargo_test_min_ver
