@@ -16,17 +16,17 @@ jobs:
 - template: ../../jobs/cargo-doc.yml
   parameters:
     job_name: ${{ parameters['job_name'] }}
-    displayName: ${{ parameters['job_displayName'] }}
+    job_displayName: ${{ parameters['job_displayName'] }}
+    job_dependsOn: ${{ parameters['job_dependsOn'] }}
     ${{ if eq(parameters['job_condition'], 'null') }}:
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.branch }}'))
+      job_condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/${{ parameters.branch }}'))
     ${{ if ne(parameters['job_condition'], 'null') }}:
-      condition: ${{ parameters['job_condition'] }}
-    dependsOn: ${{ parameters['job_dependsOn'] }}
+      job_condition: ${{ parameters['job_condition'] }}
     
     all: true
     no-deps: true
 
-    steps:
+    job_post-steps:
     - script: |
         cp -R target/doc '$(Build.BinariesDirectory)'
       displayName: Copy generated documentaion to build directory

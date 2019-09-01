@@ -38,7 +38,6 @@ jobs:
   parameters:
    branch: develop
    job_name: github_deploy_doc
-   job_condition: false
    job_dependsOn:
      - cargo_test
      - cargo_test_min_ver
