@@ -1,6 +1,3 @@
-parameters:
-  min_rust_supported: 1.31  # First version of Rust 2018 edition
-
 jobs:
 - template: ../jobs/cargo-check.yml
   parameters:
@@ -22,22 +19,8 @@ jobs:
 # Check formating
 - template: ../jobs/rustfmt.yml
 
-# Cargo test min rust version
-- template: ../jobs/cargo-test.yaml
-  parameters:
-    job_name: cargo_test_min_ver
-    job_displayName: Test min supported version
-    test-flags: 
-      nocapture: true
-    rust: ${{ parameters['min_rust_supported'] }}
-
-# Cargo test last stable version of rust
-- template: ../jobs/cargo-test.yaml
-  parameters:
-    test-flags:
-      nocapture: true
-
 # Clippy
 - template: ../jobs/cargo-clippy.yml
   parameters:
     all: true
+

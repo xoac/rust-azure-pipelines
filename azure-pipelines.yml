@@ -12,63 +12,56 @@ resources:
       ref: refs/heads/develop ## TODO you may want to change it to refs/tags/TAG_NAME.
       endpoint: PipelinesTemplates
 
-jobs:
-- template: ci/scenarios/standard.yml@templates
-  parameters:
-    min_rust_supported: 1.31
+stages: 
+- stage: check
+  displayName: "Quick check stages"
+  jobs:
+  - template: ci/scenarios/check.yml@templates
+- stage: test
+  displayName: "Run tests"
+  jobs:
+  - template: ci/scenarios/test.yml@templates
+    parameters:
+      min_rust_supported: 1.31
+- stage: embeeded
+  displayName: "Emeeded checks and tests"
+  dependsOn:
+    - check
+  jobs:
+  - template: ci/scenarios/embeeded.yml@templates
+    parameters:
+      checks:
+        - target: mips-unknown-linux-musl
+          name: cross_chcek_i686_unknown_freebsd 
+        - target: aarch64-unknown-linux-gnu
+          name: cross_check_aarch64_unknown_linux_gnu
+      tests:
+        - target: i686-unknown-linux-gnu
+          name: cross_test_i686_unknown_linux_gnu
 
-- template: ci/scenarios/embeeded.yml@templates
-  parameters:
-    checks:
-      - target: mips-unknown-linux-musl
-        name: cross_chcek_i686_unknown_freebsd 
-      - target: aarch64-unknown-linux-gnu
-        name: cross_check_aarch64_unknown_linux_gnu
-    tests:
-      - target: i686-unknown-linux-gnu
-        name: cross_test_i686_unknown_linux_gnu
-
-###################
-#    DEPLOY PART  #
-###################
-# TODO you need to modify git parameters and specify variable in pipeline. See [README.md](https://github.com/xoac/rust-azure-pipelines/blob/master/README.md)
-
-# Deploy doc
-- template: ci/scenarios/github/deploy-doc.yml@templates
-  parameters:
-   branch: develop
-   job_name: github_deploy_doc
-   job_dependsOn:
-     - cargo_test
-     - cargo_test_min_ver
-   github:
-    user: xoac
-    email: sylwesterrapala@outlook.com
-    repo: https://github.com/xoac/rust-azure-pipelines/
+- stage: deploy
+  displayName: "Deploy"
+  dependsOn:
+    - check
+    - test
+    - embeeded
+  jobs:
+  # Deploy doc
+  - template: ci/scenarios/github/deploy-doc.yml@templates
+    parameters:
+     branch: develop
+     job_name: github_deploy_doc
+     github:
+      user: xoac
+      email: sylwesterrapala@outlook.com
+      repo: https://github.com/xoac/rust-azure-pipelines/
  
-# # Release binary
-# - template: ci/github-release.yml@templates
-#   parameters:
-#    name: github_release
-#    dependsOn:
-#       - minrust
-#       - rustfmt
-#       - cargo_check
-#       - cargo_test_stable
-#       - cargo_cross
-#    rust_version: stable
-#    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-#    contents: |
-#      *
-#      !*.rlib
-#      !*.d
-#      !.*
-#    targets: # TODO specify targets you want to release
-#     - x86_64-unknown-linux-gnu
-#     - x86_64-pc-windows-gnu
-#     - x86_64-pc-windows-msvc
-#     - x86_64-apple-darwin
-#    github:
-#     gitHubConnection: PipelinesTemplates # TODO githubConnection that allow you write to repo.
-#     repositoryName: xoac/rust-azure-pipelines
-#     isPreRelease: true
+  # Release binary
+  - template: ci/scenarios/github/release-cross.yml@templates
+    parameters:
+      job_name: github_release
+      job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+      github:
+       gitHubConnection: PipelinesTemplates # TODO githubConnection that allow you write to repo.
+       repositoryName: xoac/rust-azure-pipelines
+       isPreRelease: true
