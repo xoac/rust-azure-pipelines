@@ -5,6 +5,7 @@ parameters:
   job_dependsOn: []                 # Dependencies to for the job to start
   job_condition: true               # Job condition
   job_post-steps: []                # Custom steps running after job
+  job_pre-steps: []                 # Custom steps before job start
   job_pool:
     vmImage: ubuntu-16.04           # Default vmImage
 
@@ -51,6 +52,10 @@ jobs:
   variables:
     check_flags: ''
   steps:
+  # Custom pre steps:
+  - ${{ if parameters['job_pre-steps'] }}:
+    - ${{ parameters['job_pre-steps'] }}
+
   - template: ../steps/install-rust.yml
     parameters:
       rustup_toolchain: ${{ parameters['rust'] }}

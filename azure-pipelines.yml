@@ -52,8 +52,10 @@ stages:
       builds:
         - target: x86_64-unknown-linux-gnu
           name: x86_64_unknow_linux_gnu
-        - target: armv7-unknown-linux-musleabihf
-          name: armv7_unknown_linux_musleabihf
+        - target: arm-unknown-linux-gnueabihf
+          name: arm_unknown_linux_gnueabihf
+          pre-steps:
+            - bash: apt-get install gcc-6-arm-linux-gnueabihf
 
 - stage: deploy
   displayName: "Deploy"

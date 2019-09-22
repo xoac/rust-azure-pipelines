@@ -7,6 +7,7 @@ parameters:
   builds:
     - target: x86_64-unknown-linux-gnu 
       name: x86_64_unknown_linux_gnu
+      pre-steps: [] # pre steps. You can install here for example linker
 
 jobs:
 - ${{ each build in parameters['builds'] }}:
@@ -20,6 +21,7 @@ jobs:
           vmImage: ubuntu-16.04
         release: ${{ parameters['release'] }} 
         target: "${{ build.target }}"
+        job_pre-steps: ${{ build['pre-steps'] }}
         job_post-steps:
           - template: ../steps/artifacts.yml
             parameters:
