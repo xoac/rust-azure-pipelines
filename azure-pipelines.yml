@@ -52,7 +52,8 @@ stages:
       release: true
       job_post-steps:
         - template: ../steps/artifacts.yml
-          archiveName: "$(Build.Repository.Name)-x86_64-unknown-linux-gnu.zip"
+          parameters:
+            archiveName: "$(Build.Repository.Name)-x86_64-unknown-linux-gnu.zip"
 
   - template: ci/jobs/cross-build.yml
     parameters:
@@ -60,7 +61,8 @@ stages:
       release: true
       job_post-steps:
         - template: ../steps/artifacts.yml
-          archiveName: "$(Build.Repository.Name)-armv7-unknown-linux-musleabihf.zip"
+          parameters:
+            archiveName: "$(Build.Repository.Name)-armv7-unknown-linux-musleabihf.zip"
 
 - stage: deploy
   displayName: "Deploy"
