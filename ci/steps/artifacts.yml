@@ -12,7 +12,7 @@ steps:
   - task: CopyFiles@2
     displayName: 
     inputs:
-       sourceFolder: ${{ paramters['sourceFolder'] }}
+       sourceFolder: ${{ parameters['sourceFolder'] }}
        contents: ${{ parameters['contents'] }}
        targetFolder: "$(Build.ArtifactStagingDirectory))"
   - task: PublishBuildArtifacts@1
