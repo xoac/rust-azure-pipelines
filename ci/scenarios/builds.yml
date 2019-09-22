@@ -10,7 +10,7 @@ parameters:
 
 jobs:
 - ${{ each build in parameters['builds'] }}:
-    ${{ if contains(build.target, "linux") }}:
+    ${{ if contains(build.target, 'linux') }}:
       - template: ../jobs/cargo-build.yml
         parameters:
           rust: ${{ parameters['rust'] }}
