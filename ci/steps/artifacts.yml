@@ -2,8 +2,11 @@
 parameters:
   contents: |
     **
-    !*.rlib
-    !*.d
+    !**/.fingerprint/**
+    !**/deps/**
+    !**/*.rlib
+    !**/*.d
+    !**/.*
     !.*
   sourceFolder: "$(Build.SourcesDirectory)/target/"
   artifactName: target
