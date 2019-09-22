@@ -23,7 +23,7 @@ jobs:
           job_pool:
             vmImage: ubuntu-16.04
           release: ${{ parameters['release'] }} 
-          target: "${{ build.target }}"
+          target: "${{ parameters.build.target }}"
           job_post-steps:
             - template: ../steps/artifacts.yml
               parametrs:
