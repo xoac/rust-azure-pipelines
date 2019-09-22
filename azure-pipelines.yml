@@ -55,7 +55,7 @@ stages:
         - target: arm-unknown-linux-gnueabihf
           name: arm_unknown_linux_gnueabihf
           pre-steps:
-            - bash: apt-get install gcc-6-arm-linux-gnueabihf
+            - bash: sudo apt-get install gcc-6-arm-linux-gnueabihf
 
 - stage: deploy
   displayName: "Deploy"
