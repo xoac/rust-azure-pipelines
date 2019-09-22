@@ -46,23 +46,14 @@ stages:
     #- test 
     - check
   jobs:
-  - template: ci/jobs/cargo-build.yml@templates
+  - template: ci/scenarios/builds.yml@templates
     parameters:
-      target: x86_64-unknown-linux-gnu
-      release: true
-      job_post-steps:
-        - template: ../steps/artifacts.yml
-          parameters:
-            archiveName: "$(Build.Repository.Name)-x86_64-unknown-linux-gnu.zip"
-
-  - template: ci/jobs/cross-build.yml
-    parameters:
-      target: armv7-unknown-linux-musleabihf
-      release: true
-      job_post-steps:
-        - template: ../steps/artifacts.yml
-          parameters:
-            archiveName: "$(Build.Repository.Name)-armv7-unknown-linux-musleabihf.zip"
+      artifactName: target
+      builds:
+        - target: x86_64-unknown-linux-gnu
+          name: x86_64_unknow_linux_gnu
+        - target: armv7-unknown-linux-musleabihf
+          name: armv7_unknown_linux_musleabihf
 
 - stage: deploy
   displayName: "Deploy"
