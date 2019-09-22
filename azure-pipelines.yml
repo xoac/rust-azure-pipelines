@@ -17,36 +17,39 @@ stages:
   displayName: "Quick check stages"
   jobs:
   - template: ci/scenarios/check.yml@templates
-#- stage: test
-#  displayName: "Run native tests"
-#  jobs:
-#  - template: ci/scenarios/test.yml@templates
-#    parameters:
-#      min_rust_supported: 1.31
-# - stage: embedded
-#   displayName: "Embedded checks and tests"
-#   dependsOn:
-#     - check
-#   jobs:
-#   - template: ci/scenarios/embeeded.yml@templates
-#     parameters:
-#       checks:
-#         - target: mips-unknown-linux-musl
-#           name: cross_chcek_i686_unknown_freebsd 
-#         - target: aarch64-unknown-linux-gnu
-#           name: cross_check_aarch64_unknown_linux_gnu
-#       tests:
-#         - target: i686-unknown-linux-gnu
-#           name: cross_test_i686_unknown_linux_gnu
 
+- stage: test
+  displayName: "Run native tests"
+  jobs:
+  - template: ci/scenarios/test.yml@templates
+    parameters:
+      min_rust_supported: 1.31
+
+# This stage allow to easy test your crate using cross project. 
+ - stage: embedded
+   displayName: "Embedded checks and tests"
+   dependsOn:
+     - check
+   jobs:
+   - template: ci/scenarios/embeeded.yml@templates
+     parameters:
+       checks:
+         - target: mips-unknown-linux-musl
+           name: cross_chcek_i686_unknown_freebsd 
+         - target: aarch64-unknown-linux-gnu
+           name: cross_check_aarch64_unknown_linux_gnu
+       tests:
+         - target: i686-unknown-linux-gnu
+           name: cross_test_i686_unknown_linux_gnu
+
+# This stage build binarries - you can deploy them in next stage
 - stage: build
   displayName: "Build"
   dependsOn:
-    #- embedded
-    #- test 
-    - check
+    - embedded
+    - test 
   jobs:
-  - template: ci/scenarios/builds.yml@templates
+  - template: ci/scenarios/builds.yml@templates 
     parameters:
       artifactName: target
 
@@ -94,12 +97,3 @@ stages:
             repositoryName: '$(Build.Repository.Name)'
             isPreRelease: true
 
-      #   # Release binary
-      #   - template: ci/scenarios/github/release-cross.yml@templates
-      #     parameters:
-      #       job_name: github_release
-      #       job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-      #       github:
-      #        gitHubConnection: PipelinesTemplates # TODO githubConnection that allow you write to repo.
-      #        repositoryName: xoac/rust-azure-pipelines
-      #        isPreRelease: true
