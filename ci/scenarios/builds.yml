@@ -10,19 +10,18 @@ parameters:
 
 jobs:
 - ${{ each build in parameters['builds'] }}:
-    ${{ if contains(build.target, 'linux') }}:
-      - template: ../jobs/cargo-build.yml
-        parameters:
-          rust: ${{ parameters['rust'] }}
-          job_name: ${{ build.name }}
-          job_displayName: "Build target ${{ build.target }}"
-          job_pool:
-            vmImage: ubuntu-16.04
-          release: ${{ parameters['release'] }} 
-          target: "${{ build.target }}"
-          job_post-steps:
-            - template: ../steps/artifacts.yml
-              parameters:
-                archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
-                artifactName: ${{ parameters['artifactName'] }}
+    - template: ../jobs/cargo-build.yml
+      parameters:
+        rust: ${{ parameters['rust'] }}
+        job_name: ${{ build.name }}
+        job_displayName: "Build target ${{ build.target }}"
+        job_pool:
+          vmImage: ubuntu-16.04
+        release: ${{ parameters['release'] }} 
+        target: "${{ build.target }}"
+        job_post-steps:
+          - template: ../steps/artifacts.yml
+            parameters:
+              archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
+              artifactName: ${{ parameters['artifactName'] }}
 
