@@ -8,7 +8,6 @@ parameters:
   sourceFolder: "$(Build.SourcesDirectory)/target/"
   artifactName: target
 
-
 steps:
   - task: CopyFiles@2
     displayName: 
@@ -17,5 +16,6 @@ steps:
        contents: ${{ parameters['contents'] }}
        targetFolder: "$(Build.ArtifactStagingDirectory))"
   - task: PublishBuildArtifacts@1
-    artifactName: ${{ parameters['artifactName'] }}
+    inputs:
+      artifactName: ${{ parameters['artifactName'] }}
 
