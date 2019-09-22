@@ -1,3 +1,8 @@
+# This template helps build cross binarries
+# All targets contains world windows are build on windows agent
+#                            linux are build on ubunut agnet
+#                            apple are build on mac OS agent
+
 parameters:
   # global parameters
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
@@ -7,7 +12,13 @@ parameters:
   builds:
     - target: x86_64-unknown-linux-gnu 
       name: x86_64_unknown_linux_gnu
-      pre-steps: [] # pre steps. You can install here for example linker
+      pre-steps: [] # pre steps. You can install here for example linker. Be aware that depends on architecture agent is switching
+    - target: x86_64-apple-darwin
+      name: x86_64_apple_darwin
+      pre-steps: []
+    - target: x86_64-pc-windows-msvc
+      name: x86_64_pc_windows_msvc
+      pre-steps: []
 
 jobs:
 - ${{ each build in parameters['builds'] }}:
@@ -16,7 +27,7 @@ jobs:
       parameters:
         rust: ${{ parameters['rust'] }}
         job_name: ${{ build.name }}
-        job_displayName: "Build target ${{ build.target }}"
+        job_displayName: "target ${{ build.target }}"
         job_pool:
           vmImage: ubuntu-16.04
         release: ${{ parameters['release'] }} 
@@ -33,9 +44,26 @@ jobs:
       parameters:
         rust: ${{ parameters['rust'] }}
         job_name: ${{ build.name }}
-        job_displayName: "Build target ${{ build.target }}"
+        job_displayName: "target ${{ build.target }}"
         job_pool:
           vmImage: macOS-10.13
+        release: ${{ parameters['release'] }} 
+        target: "${{ build.target }}"
+        job_pre-steps: ${{ build['pre-steps'] }}
+        job_post-steps:
+          - template: ../steps/artifacts.yml
+            parameters:
+              archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
+              artifactName: ${{ parameters['artifactName'] }}
+
+  - ${{ if contains(build.target, 'windows') }}:
+    - template: ../jobs/cargo-build.yml
+      parameters:
+        rust: ${{ parameters['rust'] }}
+        job_name: ${{ build.name }}
+        job_displayName: "target ${{ build.target }}"
+        job_pool:
+          vmImage: vs2017-win2016
         release: ${{ parameters['release'] }} 
         target: "${{ build.target }}"
         job_pre-steps: ${{ build['pre-steps'] }}
