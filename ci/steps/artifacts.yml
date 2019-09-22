@@ -1,0 +1,21 @@
+# This step help publish targets folder
+parameters:
+  contents: |
+    *
+    !*.rlib
+    !*.d
+    !.*
+  sourceFolder: "$(Build.SourcesDirectory)/target/"
+  artifactName: target
+
+
+steps:
+  - task: CopyFiles@2
+    displayName: 
+    inputs:
+       sourceFolder: ${{ paramters['sourceFolder'] }}
+       contents: ${{ parameters['contents'] }}
+       targetFolder: "$(Build.ArtifactStagingDirectory))"
+  - task: PublishBuildArtifacts@1
+    artifactName: ${{ parameters['artifactName'] }}
+

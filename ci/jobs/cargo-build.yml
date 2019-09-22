@@ -5,6 +5,8 @@ arameters:
   job_dependsOn: []                 # Dependencies to for the job to start
   job_condition: true               # Job condition
   job_post-steps: []                # Custom steps running after job
+  job_pool:
+    vmImage: ubuntu-16.04           # Default vmImage
 
   # global parameters
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
@@ -45,7 +47,7 @@ jobs:
   condition: ${{ parameters['job_condition'] }}
   dependsOn: ${{ parameters['job_dependsOn'] }}
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ${{ parameters.job_pool['vmImage'] }}
   variables:
     check_flags: ''
   steps:

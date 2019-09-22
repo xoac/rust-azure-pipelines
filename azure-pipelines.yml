@@ -18,13 +18,13 @@ stages:
   jobs:
   - template: ci/scenarios/check.yml@templates
 - stage: test
-  displayName: "Run tests"
+  displayName: "Run native tests"
   jobs:
   - template: ci/scenarios/test.yml@templates
     parameters:
       min_rust_supported: 1.31
 - stage: embeeded
-  displayName: "Emeeded checks and tests"
+  displayName: "Embedded checks and tests"
   dependsOn:
     - check
   jobs:
@@ -38,6 +38,22 @@ stages:
       tests:
         - target: i686-unknown-linux-gnu
           name: cross_test_i686_unknown_linux_gnu
+
+- stage: build
+  displayName: "Build"
+  jobs:
+  - template: ci/jobs/cargo-build.yml
+    parameters:
+      target: x86_64-unknown-linux-gnu
+      release: true
+      job_post-steps:
+        - template: ci/steps/artifacts.yml
+  - template: ci/jobs/cross-build.yml
+    parameters:
+      target: armv7-unknown-linux-musleabihf
+      release: true
+      job_post-steps:
+        - template: ci/steps/artifacts.yml
 
 - stage: deploy
   displayName: "Deploy"
@@ -56,12 +72,21 @@ stages:
       email: sylwesterrapala@outlook.com
       repo: https://github.com/xoac/rust-azure-pipelines/
  
-  # Release binary
-  - template: ci/scenarios/github/release-cross.yml@templates
-    parameters:
-      job_name: github_release
-      job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-      github:
-       gitHubConnection: PipelinesTemplates # TODO githubConnection that allow you write to repo.
-       repositoryName: xoac/rust-azure-pipelines
-       isPreRelease: true
+  - job: list_created_piplines
+    displayName: "List artefacts"
+    steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: target 
+
+      - bash: tree
+
+      #   # Release binary
+      #   - template: ci/scenarios/github/release-cross.yml@templates
+      #     parameters:
+      #       job_name: github_release
+      #       job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+      #       github:
+      #        gitHubConnection: PipelinesTemplates # TODO githubConnection that allow you write to repo.
+      #        repositoryName: xoac/rust-azure-pipelines
+      #        isPreRelease: true
