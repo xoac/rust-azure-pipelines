@@ -13,20 +13,20 @@ parameters:
       name: x86_64_unknown_linux_gnu
 
 jobs:
-#- ${{ each build in parameters['builds'] }}:
-# ${{ if contains(build.target, 'linux') }}:
+- ${{ each build in parameters['builds'] }}:
+    ${{ if contains(build.target, 'linux') }}:
       - template: ../jobs/cargo-build.yml
         parameters:
           rust: ${{ parameters['rust'] }}
-          job_name: ${{ parameters.build.name }}
-          job_displayName: "Build target ${{ parameters.build.target }}"
+          job_name: ${{ build.name }}
+          job_displayName: "Build target ${{ build.target }}"
           job_pool:
             vmImage: ubuntu-16.04
           release: ${{ parameters['release'] }} 
-          target: "${{ parameters.build.target }}"
+          target: "${{ build.target }}"
           job_post-steps:
             - template: ../steps/artifacts.yml
               parameters:
-                archiveName: "$(Build.Repository.Name) - ${{ parameters.build.target }}"
+                archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
                 artifactName: ${{ parameters['artifactName'] }}
 
