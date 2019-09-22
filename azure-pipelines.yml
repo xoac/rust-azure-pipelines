@@ -52,12 +52,15 @@ stages:
       release: true
       job_post-steps:
         - template: ../steps/artifacts.yml
+          archiveName: "$(Build.Repository.Name)-${{ parameters['target'] }}.zip"
+
   - template: ci/jobs/cross-build.yml
     parameters:
       target: armv7-unknown-linux-musleabihf
       release: true
       job_post-steps:
         - template: ../steps/artifacts.yml
+          archiveName: "$(Build.Repository.Name)-${{ parameters['target'] }}.zip"
 
 - stage: deploy
   displayName: "Deploy"
@@ -74,14 +77,34 @@ stages:
       email: sylwesterrapala@outlook.com
       repo: https://github.com/xoac/rust-azure-pipelines/
  
-  - job: list_created_piplines
-    displayName: "List artefacts"
+  - job: deploy_release
+    displayName: "Deploy binaries to github"
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     steps:
       - task: DownloadPipelineArtifact@2
         inputs:
           artifactName: target 
+      - bash: |
+          MY_TAG="$(Build.SourceBranch)"
+          MY_TAG=${MY_TAG#refs/tags/}
+          echo $MY_TAG
+          echo "##vso[task.setvariable variable=build.my_tag]$MY_TAG"
+          DATE="$(date +%Y-%m-%d)"
+          echo "##vso[task.setvariable variable=build.date]$DATE"
+        displayName: "Create date and tag variables"
 
-      - bash: tree
+      - task: GitHubRelease@0
+        displayName: Create release
+        inputs:
+            gitHubConnection: PipelinesTemplates
+            tagSource: manual
+            title: '$(build.my_tag) - $(build.date)'
+            tag: '$(build.my_tag)'
+            assetUploadMode: replace
+            action: edit
+            assets: '$(Build.ArtifactStagingDirectory)/*'
+            repositoryName: '$(Build.Repository.Name)'
+            isPreRelease: true
 
       #   # Release binary
       #   - template: ci/scenarios/github/release-cross.yml@templates

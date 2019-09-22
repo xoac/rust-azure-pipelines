@@ -1,7 +1,7 @@
 parameters:
   # azure pipelines paramters
-  job_name: cargo_check             # Default job name
-  job_displayName: Cargo check      # Default displayName
+  job_name: cargo_build             # Default job name
+  job_displayName: Cargo build      # Default displayName
   job_dependsOn: []                 # Dependencies to for the job to start
   job_condition: true               # Job condition
   job_post-steps: []                # Custom steps running after job
