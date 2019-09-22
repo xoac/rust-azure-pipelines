@@ -54,8 +54,7 @@ jobs:
   - template: ../steps/install-rust.yml
     parameters:
       rustup_toolchain: ${{ parameters['rust'] }}
-      targets:
-        - ${{ parameters['target'] }}
+      targets: [${{ parameters['target'] }}]
  
   # ##########################################################################################
   # Order of script modifying `check_flags` is the same as in paramters.

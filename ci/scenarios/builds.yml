@@ -8,10 +8,6 @@ parameters:
     - target: x86_64-unknown-linux-gnu 
       name: x86_64_unknown_linux_gnu
 
-  build:
-    - target: x86_64-unknown-linux-gnu 
-      name: x86_64_unknown_linux_gnu
-
 jobs:
 - ${{ each build in parameters['builds'] }}:
     ${{ if contains(build.target, 'linux') }}:
