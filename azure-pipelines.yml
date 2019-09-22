@@ -14,12 +14,12 @@ resources:
 
 stages: 
 - stage: check
-  displayName: "Quick check stages"
+  displayName: "Quick checks"
   jobs:
   - template: ci/scenarios/check.yml@templates
 
 - stage: test
-  displayName: "Run native tests"
+  displayName: "Multi OS native tests"
   jobs:
   - template: ci/scenarios/test.yml@templates
     parameters:
@@ -27,7 +27,7 @@ stages:
 
 # This stage allow to easy test your crate using cross project. 
 - stage: embedded
-  displayName: "Embedded checks and tests"
+  displayName: "Cross check and tests"
   dependsOn:
     - check
   jobs:
@@ -44,7 +44,7 @@ stages:
 
 # This stage build binarries - you can deploy them in next stage
 - stage: build
-  displayName: "Build"
+  displayName: "Builds"
   dependsOn:
     - embedded
     - test 
@@ -54,7 +54,7 @@ stages:
       artifactName: target
 
 - stage: deploy
-  displayName: "Deploy"
+  displayName: "Deploys"
   dependsOn:
     - build
   jobs:
