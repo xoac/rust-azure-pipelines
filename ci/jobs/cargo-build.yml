@@ -1,4 +1,4 @@
-arameters:
+parameters:
   # azure pipelines paramters
   job_name: cargo_check             # Default job name
   job_displayName: Cargo check      # Default displayName
