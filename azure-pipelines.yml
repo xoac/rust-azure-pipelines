@@ -23,7 +23,7 @@ stages:
   - template: ci/scenarios/test.yml@templates
     parameters:
       min_rust_supported: 1.31
-- stage: embeeded
+- stage: embedded
   displayName: "Embedded checks and tests"
   dependsOn:
     - check
@@ -41,6 +41,9 @@ stages:
 
 - stage: build
   displayName: "Build"
+  dependsOn:
+    - embedded
+    - test 
   jobs:
   - template: ci/jobs/cargo-build.yml@templates
     parameters:
@@ -58,9 +61,7 @@ stages:
 - stage: deploy
   displayName: "Deploy"
   dependsOn:
-    - check
-    - test
-    - embeeded
+    - build
   jobs:
   # Deploy doc
   - template: ci/scenarios/github/deploy-doc.yml@templates
