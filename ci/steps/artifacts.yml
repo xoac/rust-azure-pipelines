@@ -1,7 +1,7 @@
 # This step help publish targets folder
 parameters:
   contents: |
-    *
+    **
     !*.rlib
     !*.d
     !.*
