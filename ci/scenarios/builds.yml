@@ -1,0 +1,28 @@
+parameters:
+  # global parameters
+  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+
+  release: true               # build with release flag
+  artifactName: target
+  builds:
+    - target: x86_64-unknown-linux-gnu 
+      name: x86_64_unknown_linux_gnu
+
+jobs:
+${{ each build in parameters['builds'] }}:
+  ${{ if contains(build.target, "linux") }}:
+  - template: ../jobs/cargo-build.yml
+    parameters:
+      rust: ${{ parameters['rust'] }}
+      job_name: ${{ build.name }}
+      job_displayName: Build target ${{ build.target }}
+      job_pool:
+        vmImage: ubuntu-16.04
+      release: ${{ parameters['release'] }} 
+      target: ${{ build.target }}
+      job_post-steps:
+        - template: ../steps/artifacts.yml
+          parametrs:
+            archiveName: "$(Build.Repository.Name) - ${{ target }}"
+            artifactName: ${{ parameters['artefactName'] }}
+
