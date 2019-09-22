@@ -18,8 +18,8 @@ jobs:
       - template: ../jobs/cargo-build.yml
         parameters:
           rust: ${{ parameters['rust'] }}
-          job_name: ${{ build.name }}
-          job_displayName: "Build target ${{ build.target }}"
+          job_name: ${{ parameters.build.name }}
+          job_displayName: "Build target ${{ parameters.build.target }}"
           job_pool:
             vmImage: ubuntu-16.04
           release: ${{ parameters['release'] }} 
@@ -27,6 +27,6 @@ jobs:
           job_post-steps:
             - template: ../steps/artifacts.yml
               parametrs:
-                archiveName: "$(Build.Repository.Name) - ${{ target }}"
+                archiveName: "$(Build.Repository.Name) - ${{ parameters.build.target }}"
                 artifactName: ${{ parameters['artifactName'] }}
 
