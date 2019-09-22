@@ -14,7 +14,7 @@ steps:
     inputs:
        sourceFolder: ${{ parameters['sourceFolder'] }}
        contents: ${{ parameters['contents'] }}
-       targetFolder: "$(Build.ArtifactStagingDirectory))"
+       targetFolder: "$(Build.ArtifactStagingDirectory)"
   - task: PublishBuildArtifacts@1
     inputs:
       artifactName: ${{ parameters['artifactName'] }}
