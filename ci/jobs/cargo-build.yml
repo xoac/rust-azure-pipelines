@@ -54,7 +54,7 @@ jobs:
   - template: ../steps/install-rust.yml
     parameters:
       rustup_toolchain: ${{ parameters['rust'] }}
-      ${{ if ne(parameters['target], '') }}:
+      ${{ if ne(parameters['target'], '') }}:
         targets: 
         - ${{ parameters['target'] }}
  
