@@ -52,11 +52,11 @@ stages:
       builds:
         - target: x86_64-unknown-linux-gnu
           name: x86_64_unknow_linux_gnu
-        - target: arm-unknown-linux-gnueabihf
-          name: arm_unknown_linux_gnueabihf
+        - target: armv7-unknown-linux-gnueabihf
+          name: armv7_unknown_linux_gnueabihf
           pre-steps:
             - bash: sudo apt-get -qq update
-            - bash: sudo apt-get install gcc-arm-linux-gnueabihf postgresql-devel
+            - bash: sudo apt-get install gcc-4.7-multilib-arm-linux-gnueabihf
 
 - stage: deploy
   displayName: "Deploy"
