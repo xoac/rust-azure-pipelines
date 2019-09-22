@@ -9,7 +9,7 @@ resources:
     - repository: templates
       type: github
       name: xoac/rust-azure-pipelines
-      ref: refs/tags/v0.2.0-alpha.1 ## TODO you may want to change it to refs/tags/TAG_NAME.
+      ref: refs/head/develop ## TODO you may want to change it to refs/tags/TAG_NAME.
       endpoint: PipelinesTemplates
 
 stages: 
@@ -45,6 +45,7 @@ stages:
 # This stage build binarries - you can deploy them in next stage
 - stage: build
   displayName: "Builds"
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
   dependsOn:
     - embedded
     - test 
