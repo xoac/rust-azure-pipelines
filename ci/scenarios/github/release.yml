@@ -1,81 +1,24 @@
 parameters:
-  # azure pipelines paramters
-  job_name: cargo_clippy            # Default job name
-  job_displayName: Cargo clipp      # Default displayName
-  job_dependsOn: []                 # Dependencies to for the job to start
-  job_condition: true               # Job condition
-  job_post-steps: []                # Custom steps running after job
+  gitHubConnection: ""                      # Enter the service connection name for your GitHub connection. More: https://aka.ms/AA3am5s
 
-  # global parameters
-  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+  job_condition: false                      # Default is false since gitHubConnection need to be set manually. Example: `and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))`
+  job_displayName: Deploy asserts to github
+  job_name: github_deploy
 
-  release: true               # build with release flag
+  artifactName: target
+  assetUploadMode: replace
+  action: edit
+  isPreRelease: true
+  repositoryName: '$(Build.Repository.Name)'
   
-  github:
-    isPreRelease: false
-    repositoryName: '$(Build.Repository.Name)'
-
-  tarCompression: 'none'
-  archiveType: 'zip'
-  archiveName: '$(Build.Repository.Name)'
-
-variables:
-  name: '$(Build.Repository.Name)'
-
 jobs:
-- template: ../../jobs/cross-build.yml
-  parameters:
-    job_name: ${{ parameters['job_name'] }}
-    job_displayName: ${{ parameters['job_displayName'] }}
-    job_condition: ${{ parameters['job_condition'] }}
-    job_dependsOn: 
-    - ${{ parameters['job_dependsOn'] }} 
-
-    release: $${{ parameters['release'] }} 
-
-    job_post-steps:
-      - task: CopyFiles@2
-        displayName: Copy files for target ${{ build_target }}
+  - job: ${{ parameters['job_name'] }}
+    displayName: ${{ parameters['job_displayName'] }}
+    condition: ${{ parameters['job_condition'] }}
+    steps:
+      - task: DownloadPipelineArtifact@2
         inputs:
-           sourceFolder: '$(Build.SourcesDirectory)/target/${{ build_target }}/release' 
-           contents: ${{ parameters.contents }}
-           targetFolder: '$(Build.BinariesDirectory)/${{ build_target }}'
-      - task: ArchiveFiles@2
-        displayName: Gather assets
-        inputs:
-            rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
-            archiveType: ${{ parameters.archiveType }}
-            tarCompression: ${{ parameters.tarCompression }}
-            archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}-$(build.my_tag)-${{ build_target }}.zip'
-
-  - ${{ each build_target  in parameters.targets }}:
-    - ${{ if not(or(eq(build_target, 'x86_64-apple-darwin'), eq(build_target, 'x86_64-pc-windows-msvc'))) }}:
-          displayName: Relase build for target ${{ build_target }}
-
-  - task: GitHubRelease@0
-    displayName: Create release
-    inputs:
-        gitHubConnection: ${{ parameters.github.gitHubConnection }}
-        tagSource: manual
-        title: '$(build.my_tag) - $(build.date)'
-        tag: '$(build.my_tag)'
-        assetUploadMode: replace
-        action: edit
-        assets: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}*'
-        repositoryName: ${{ parameters.github.repositoryName }}
-        isPreRelease: ${{ parameters.github.isPreRelease }}
-
-- ${{ each build_target in parameters.targets }}:
-  - ${{ if eq(build_target, 'x86_64-apple-darwin') }}:
-    - job: ${{ parameters.name }}_macOS
-      condition: ${{ parameters.condition }}
-      displayName: ${{ parameters.displayName }} (macOS) 
-      dependsOn: ${{ parameters.dependsOn }}
-      pool:
-        vmImage: macOS-10.13
-      steps:
-      - template: install-rust.yml
-
+          artifactName: ${{ parameters['artifactName'] }}
       - bash: |
           MY_TAG="$(Build.SourceBranch)"
           MY_TAG=${MY_TAG#refs/tags/}
@@ -85,87 +28,16 @@ jobs:
           echo "##vso[task.setvariable variable=build.date]$DATE"
         displayName: "Create date and tag variables"
 
-      - script: |
-              echo Start building ${{ build_target }}
-              cargo build --release
-              ls -l
-              ls -l target/release/*
-        displayName: Relase build for target ${{ build_target }}
-      - task: CopyFiles@2
-        displayName: Copy files for target ${{ build_target }}
-        inputs:
-           sourceFolder: '$(Build.SourcesDirectory)/target/release' 
-           contents: ${{ parameters.contents }}
-           targetFolder: '$(Build.BinariesDirectory)/${{ build_target }}'
-      - task: ArchiveFiles@2
-        displayName: Gather assets
-        inputs:
-            rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
-            archiveType: ${{ parameters.archiveType }}
-            tarCompression: ${{ parameters.tarCompression }}
-            archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}-$(build.my_tag)-${{ build_target }}.zip'
-
       - task: GitHubRelease@0
-        displayName: Create release
+        displayName: "GithubRelease@0 '$(build.my_tag) - $(build.date)'"
         inputs:
-            gitHubConnection: ${{ parameters.github.gitHubConnection }}
+            gitHubConnection: PipelinesTemplates
             tagSource: manual
             title: '$(build.my_tag) - $(build.date)'
             tag: '$(build.my_tag)'
-            assetUploadMode: replace
-            action: edit
-            assets: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}*'
-            repositoryName: ${{ parameters.github.repositoryName }}
-            isPreRelease: ${{ parameters.github.isPreRelease }}
+            assetUploadMode: ${{ parameters['assetUploadMode'] }}
+            action: ${{ parameters['action'] }}
+            assets: "$(Pipeline.Workspace)/${{parameters['artifactName']}}/*"  # target is the same what artifactName in download step
+            repositoryName: ${{ parameters['repositoryName'] }}
+            isPreRelease: ${{ parameters['isPreRelease'] }}
 
-  - ${{ if eq(build_target, 'x86_64-pc-windows-msvc') }}:
-    - job: ${{ parameters.name }}_msvc
-      condition: ${{ parameters.condition }}
-      displayName: ${{ parameters.displayName }} (Windows) 
-      dependsOn: ${{ parameters.dependsOn }}
-      pool:
-        vmImage: vs2017-win2016
-      steps:
-      - template: install-rust.yml
-
-      - bash: |
-          MY_TAG="$(Build.SourceBranch)"
-          MY_TAG=${MY_TAG#refs/tags/}
-          echo $MY_TAG
-          echo "##vso[task.setvariable variable=build.my_tag]$MY_TAG"
-          DATE="$(date +%Y-%m-%d)"
-          echo "##vso[task.setvariable variable=build.date]$DATE"
-        displayName: "Create date and tag variables"
-
-      - script: |
-              echo Start building ${{ build_target }}
-              cargo build --release
-              ls -l
-              ls -l target/release/*
-        displayName: Relase build for target ${{ build_target }}
-      - task: CopyFiles@2
-        displayName: Copy files for target ${{ build_target }}
-        inputs:
-           sourceFolder: '$(Build.SourcesDirectory)/target/release' 
-           contents: ${{ parameters.contents }}
-           targetFolder: '$(Build.BinariesDirectory)/${{ build_target }}'
-      - task: ArchiveFiles@2
-        displayName: Gather assets
-        inputs:
-            rootFolderOrFile: '$(Build.BinariesDirectory)/${{ build_target }}'
-            archiveType: ${{ parameters.archiveType }}
-            tarCompression: ${{ parameters.tarCompression }}
-            archiveFile: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}-$(build.my_tag)-${{ build_target }}.zip'
-
-      - task: GitHubRelease@0
-        displayName: Create release
-        inputs:
-            gitHubConnection: ${{ parameters.github.gitHubConnection }}
-            tagSource: manual
-            title: '$(build.my_tag) - $(build.date)'
-            tag: '$(build.my_tag)'
-            assetUploadMode: replace
-            action: edit
-            assets: '$(Build.ArtifactStagingDirectory)/${{ parameters.archiveName }}*'
-            repositoryName: ${{ parameters.github.repositoryName }}
-            isPreRelease: ${{ parameters.github.isPreRelease }}

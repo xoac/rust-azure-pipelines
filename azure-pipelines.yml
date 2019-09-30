@@ -6,7 +6,7 @@ trigger:
 
 resources:
   repositories:
-    - repository: templates
+    - repository: rust_pipelines
       type: github
       name: xoac/rust-azure-pipelines
       ref: refs/tags/v0.1.0-alpha.2
@@ -17,12 +17,12 @@ stages:
 - stage: check
   displayName: "Quick checks"
   jobs:
-  - template: ci/scenarios/check.yml@templates
+  - template: ci/scenarios/check.yml@rust_pipelines
 
 - stage: test
   displayName: "Multi OS native tests"
   jobs:
-  - template: ci/scenarios/test.yml@templates
+  - template: ci/scenarios/test.yml@rust_pipelines
     parameters:
       min_rust_supported: 1.31
 
@@ -32,7 +32,7 @@ stages:
   dependsOn:
     - check
   jobs:
-  - template: ci/scenarios/embeeded.yml@templates
+  - template: ci/scenarios/embeeded.yml@rust_pipelines
     parameters:
       checks:
         - target: mips-unknown-linux-musl
@@ -51,7 +51,7 @@ stages:
     - embedded
     - test 
   jobs:
-  - template: ci/scenarios/builds.yml@templates 
+  - template: ci/scenarios/builds.yml@rust_pipelines 
     parameters:
       artifactName: target
 
@@ -61,7 +61,7 @@ stages:
     - build
   jobs:
   # Deploy doc
-  - template: ci/scenarios/github/deploy-doc.yml@templates
+  - template: ci/scenarios/github/deploy-doc.yml@rust_pipelines
     parameters:
      branch: develop
      job_name: github_deploy_doc
@@ -70,32 +70,7 @@ stages:
       email: sylwesterrapala@outlook.com
       repo: https://github.com/xoac/rust-azure-pipelines/
  
-  - job: deploy_release
-    displayName: "Deploy binaries to github"
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-    steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: target 
-      - bash: |
-          MY_TAG="$(Build.SourceBranch)"
-          MY_TAG=${MY_TAG#refs/tags/}
-          echo $MY_TAG
-          echo "##vso[task.setvariable variable=build.my_tag]$MY_TAG"
-          DATE="$(date +%Y-%m-%d)"
-          echo "##vso[task.setvariable variable=build.date]$DATE"
-        displayName: "Create date and tag variables"
-
-      - task: GitHubRelease@0
-        displayName: Create release
-        inputs:
-            gitHubConnection: PipelinesTemplates
-            tagSource: manual
-            title: '$(build.my_tag) - $(build.date)'
-            tag: '$(build.my_tag)'
-            assetUploadMode: replace
-            action: edit
-            assets: 'target/*'  # target is the same what artifactName in download step
-            repositoryName: '$(Build.Repository.Name)'
-            isPreRelease: true
-
+  - template: ci/scenarios/github/release.yml@rust_pipelines
+    parameters:
+      job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+      gitHubConnection: PipelinesTemplates

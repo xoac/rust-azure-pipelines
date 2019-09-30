@@ -12,7 +12,7 @@ parameters:
   builds:
     - target: x86_64-unknown-linux-gnu 
       name: x86_64_unknown_linux_gnu
-      pre-steps: [] # pre steps. You can install here for example linker. Be aware that depends on architecture agent is switching
+      pre-steps: [] # pre steps. You can install here for example linker. Be aware that depends on architecture and agent is switching for diffrent target.
     - target: x86_64-apple-darwin
       name: x86_64_apple_darwin
       pre-steps: []
@@ -27,16 +27,19 @@ jobs:
       parameters:
         rust: ${{ parameters['rust'] }}
         job_name: ${{ build.name }}
-        job_displayName: "target ${{ build.target }}"
+        job_displayName: "target ${{ build.target }}" 
         job_pool:
           vmImage: ubuntu-16.04
-        release: ${{ parameters['release'] }} 
+        release: ${{ parameters['release'] }}
         target: "${{ build.target }}"
         job_pre-steps: ${{ build['pre-steps'] }}
         job_post-steps:
+          - bash: |
+              REPO_BASE_NAME="$(basename $(Build.Repository.Name))"
+              echo "##vso[task.setvariable variable=repo_base_name]$REPO_BASE_NAME"
           - template: ../steps/artifacts.yml
             parameters:
-              archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
+              archiveName: "$(REPO_BASE_NAME) - ${{ build.target }}"
               artifactName: ${{ parameters['artifactName'] }}
 
   - ${{ if contains(build.target, 'apple') }}:
@@ -51,9 +54,12 @@ jobs:
         target: "${{ build.target }}"
         job_pre-steps: ${{ build['pre-steps'] }}
         job_post-steps:
+          - bash: |
+              REPO_BASE_NAME="$(basename $(Build.Repository.Name))"
+              echo "##vso[task.setvariable variable=repo_base_name]$REPO_BASE_NAME"
           - template: ../steps/artifacts.yml
             parameters:
-              archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
+              archiveName: "$(REPO_BASE_NAME) - ${{ build.target }}"
               artifactName: ${{ parameters['artifactName'] }}
 
   - ${{ if contains(build.target, 'windows') }}:
@@ -68,8 +74,10 @@ jobs:
         target: "${{ build.target }}"
         job_pre-steps: ${{ build['pre-steps'] }}
         job_post-steps:
+          - bash: |
+              REPO_BASE_NAME="$(basename $(Build.Repository.Name))"
+              echo "##vso[task.setvariable variable=repo_base_name]$REPO_BASE_NAME"
           - template: ../steps/artifacts.yml
             parameters:
-              archiveName: "$(Build.Repository.Name) - ${{ build.target }}"
+              archiveName: "$(REPO_BASE_NAME) - ${{ build.target }}"
               artifactName: ${{ parameters['artifactName'] }}
-
