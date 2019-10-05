@@ -18,6 +18,11 @@ stages:
   displayName: "Quick checks"
   jobs:
   - template: ci/scenarios/check.yml@rust_pipelines
+    parameters:
+      cargo-check: true
+      cargo-check-nigtly: true
+      cargo-clippy: true
+      rustfmt: true
 
 - stage: test
   displayName: "Multi OS native tests"
@@ -27,6 +32,7 @@ stages:
       min_rust_supported: 1.31
 
 # This stage allow to easy test your crate using cross project. 
+# Supported targets: https://github.com/rust-embedded/cross#supported-targets
 - stage: embedded
   displayName: "Cross check and tests"
   dependsOn:
@@ -73,4 +79,4 @@ stages:
   - template: ci/scenarios/github/release.yml@rust_pipelines
     parameters:
       job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-      gitHubConnection: PipelinesTemplates
+      gitHubConnection: PipelinesTemplates 

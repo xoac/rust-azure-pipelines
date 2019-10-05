@@ -19,6 +19,7 @@ jobs:
       - task: DownloadPipelineArtifact@2
         inputs:
           artifactName: ${{ parameters['artifactName'] }}
+          targetPath: "$(Pipeline.Workspace)/${{parameters['artifactName']}}"
       - bash: |
           MY_TAG="$(Build.SourceBranch)"
           MY_TAG=${MY_TAG#refs/tags/}

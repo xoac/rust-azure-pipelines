@@ -4,6 +4,7 @@ parameters:
   job_displayName: Cargo check      # Default displayName
   job_dependsOn: []                 # Dependencies to for the job to start
   job_condition: true               # Job condition
+  job_continueOnError: false        # Should other job still run even if this fail
   job_post-steps: []                # Custom steps running after job
 
   # global parameters
@@ -44,6 +45,7 @@ jobs:
   displayName: ${{ parameters['job_displayName'] }}
   condition: ${{ parameters['job_condition'] }}
   dependsOn: ${{ parameters['job_dependsOn'] }}
+  continueOnError: ${{ parameters['job_continueOnError'] }}
   pool:
     vmImage: ubuntu-16.04
   variables:
