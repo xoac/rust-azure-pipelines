@@ -72,7 +72,7 @@ jobs:
     - script: echo '##vso[task.setvariable variable=clippy_flags]$(clippy_flags) --allow ${{ a }}'
       displayName: "[cli flag modify] Add lint allowed: ${{ a }}"
 
-  - ${{ each w in parameters['deny'] }}:
+  - ${{ each d in parameters['deny'] }}:
     - script: echo '##vso[task.setvariable variable=clippy_flags]$(clippy_flags) --deny ${{ d }}'
       displayName: "[cli flag modify] Add lint denied: ${{ d }}"
 
