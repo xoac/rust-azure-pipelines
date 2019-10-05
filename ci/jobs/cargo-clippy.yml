@@ -4,6 +4,7 @@ parameters:
   job_displayName: Cargo clippy     # Default displayName
   job_dependsOn: []                 # Dependencies to for the job to start
   job_condition: true               # Job condition
+  job_continueOnError: false        # Treat error as warings?
   job_post-steps: []                # Custom steps running after job
 
   # global parameters
@@ -49,6 +50,7 @@ jobs:
 - job: ${{ parameters['job_name'] }}
   displayName: ${{ parameters['job_displayName'] }}
   condition: ${{ parameters['job_condition'] }}
+  continueOnError: ${{ parameters['job_continueOnError'] }}
   dependsOn: ${{ parameters['job_dependsOn'] }}
   pool:
     vmImage: ubuntu-16.04

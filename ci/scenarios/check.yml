@@ -29,10 +29,14 @@ jobs:
 - template: ../jobs/rustfmt.yml
   parameters:
     job_condition: ${{ parameters['rustfmt'] }}
+    job_continueOnError: true
 
 # Clippy
 - template: ../jobs/cargo-clippy.yml
   parameters:
     job_condition: ${{ parameters['cargo-clippy'] }}
+    job_continueOnError: true
     all: true
+    deny:
+      - warnings
 
