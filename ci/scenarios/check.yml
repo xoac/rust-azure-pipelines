@@ -20,9 +20,7 @@ jobs:
     job_condition: ${{ parameters['cargo-check-nightly'] }}
     job_displayName: Cargo check (nightly)
     job_continueOnError: true
-    job_post-steps:
-      - bash: exit 1
-    # parameters from running program are with the same name without any prefix
+
     rust: nightly
     all: true
     benches: true

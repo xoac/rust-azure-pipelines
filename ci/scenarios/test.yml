@@ -17,3 +17,11 @@ jobs:
     test-flags:
       nocapture: true
 
+- template: ../jobs/cargo-test.yaml
+  parameters:
+    rust: nightly
+    job_name: cargo_test_nightly
+    job_displayName: Cargo test (nightly)
+    job_continueOnError: true
+    test-flags: 
+      nocapture: true
