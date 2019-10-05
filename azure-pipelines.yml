@@ -9,8 +9,8 @@ resources:
     - repository: rust_pipelines
       type: github
       name: xoac/rust-azure-pipelines
-      ref: refs/tags/v0.1.0-alpha.2
-      #ref: refs/head/develop ## TODO you may want to change it to refs/tags/TAG_NAME.
+      # ref: refs/tags/v0.1.0-alpha.2
+      ref: refs/heads/develop ## TODO you may want to change it to refs/tags/TAG_NAME.
       endpoint: PipelinesTemplates
 
 stages: 
