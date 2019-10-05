@@ -1,0 +1,11 @@
+parameters:
+  rust_toolchain: stable
+
+steps:
+  - template: install-rust.yml
+    parameters:
+      rust_toolchain: ${{ parameters.rust_toolchain }}
+      steps:
+      - script: |
+          cargo install --git https://github.com/rust-embedded/cross --rev 13500f7b4d6af0fccbbdcf016d92c86b6a336736
+        displayName: Instaling cross support

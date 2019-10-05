@@ -1,0 +1,38 @@
+parameters:
+  cargo-clippy: true
+  cargo-check: true
+  cargo-check-nightly: true
+  rustfmt: true
+
+jobs:
+- template: ../jobs/cargo-check.yml
+  parameters:
+    job_name: check_stable
+    job_condition: ${{ parameters['cargo-check'] }}
+    job_displayName: Cargo check (stable)
+    all: true
+    benches: true
+
+- template: ../jobs/cargo-check.yml
+  parameters:
+    # all azure job parameters start with `job_` prefix
+    job_name: check_nightly
+    job_condition: ${{ parameters['cargo-check-nightly'] }}
+    job_displayName: Cargo check (nightly)
+    job_continueOnError: true
+
+    rust: nightly
+    all: true
+    benches: true
+
+# Check formating
+- template: ../jobs/rustfmt.yml
+  parameters:
+    job_condition: ${{ parameters['rustfmt'] }}
+
+# Clippy
+- template: ../jobs/cargo-clippy.yml
+  parameters:
+    job_condition: ${{ parameters['cargo-clippy'] }}
+    all: true
+

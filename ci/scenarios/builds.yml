@@ -1,0 +1,83 @@
+# This template helps build cross binarries
+# All targets contains world windows are build on windows agent
+#                            linux are build on ubunut agnet
+#                            apple are build on mac OS agent
+
+parameters:
+  # global parameters
+  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+
+  release: true               # build with release flag
+  artifactName: target
+  builds:
+    - target: x86_64-unknown-linux-gnu 
+      name: x86_64_unknown_linux_gnu
+      pre-steps: [] # pre steps. You can install here for example linker. Be aware that depends on architecture and agent is switching for diffrent target.
+    - target: x86_64-apple-darwin
+      name: x86_64_apple_darwin
+      pre-steps: []
+    - target: x86_64-pc-windows-msvc
+      name: x86_64_pc_windows_msvc
+      pre-steps: []
+
+jobs:
+- ${{ each build in parameters['builds'] }}:
+  - ${{ if contains(build.target, 'linux') }}:
+    - template: ../jobs/cargo-build.yml
+      parameters:
+        rust: ${{ parameters['rust'] }}
+        job_name: ${{ build.name }}
+        job_displayName: "target ${{ build.target }}" 
+        job_pool:
+          vmImage: ubuntu-16.04
+        release: ${{ parameters['release'] }}
+        target: "${{ build.target }}"
+        job_pre-steps: ${{ build['pre-steps'] }}
+        job_post-steps:
+          - bash: |
+              REPO_BASE_NAME="$(basename $(Build.Repository.Name))"
+              echo "##vso[task.setvariable variable=repo_base_name]$REPO_BASE_NAME"
+          - template: ../steps/artifacts.yml
+            parameters:
+              archiveName: "$(REPO_BASE_NAME) - ${{ build.target }}"
+              artifactName: ${{ parameters['artifactName'] }}
+
+  - ${{ if contains(build.target, 'apple') }}:
+    - template: ../jobs/cargo-build.yml
+      parameters:
+        rust: ${{ parameters['rust'] }}
+        job_name: ${{ build.name }}
+        job_displayName: "target ${{ build.target }}"
+        job_pool:
+          vmImage: macOS-10.13
+        release: ${{ parameters['release'] }} 
+        target: "${{ build.target }}"
+        job_pre-steps: ${{ build['pre-steps'] }}
+        job_post-steps:
+          - bash: |
+              REPO_BASE_NAME="$(basename $(Build.Repository.Name))"
+              echo "##vso[task.setvariable variable=repo_base_name]$REPO_BASE_NAME"
+          - template: ../steps/artifacts.yml
+            parameters:
+              archiveName: "$(REPO_BASE_NAME) - ${{ build.target }}"
+              artifactName: ${{ parameters['artifactName'] }}
+
+  - ${{ if contains(build.target, 'windows') }}:
+    - template: ../jobs/cargo-build.yml
+      parameters:
+        rust: ${{ parameters['rust'] }}
+        job_name: ${{ build.name }}
+        job_displayName: "target ${{ build.target }}"
+        job_pool:
+          vmImage: vs2017-win2016
+        release: ${{ parameters['release'] }} 
+        target: "${{ build.target }}"
+        job_pre-steps: ${{ build['pre-steps'] }}
+        job_post-steps:
+          - bash: |
+              REPO_BASE_NAME="$(basename $(Build.Repository.Name))"
+              echo "##vso[task.setvariable variable=repo_base_name]$REPO_BASE_NAME"
+          - template: ../steps/artifacts.yml
+            parameters:
+              archiveName: "$(REPO_BASE_NAME) - ${{ build.target }}"
+              artifactName: ${{ parameters['artifactName'] }}

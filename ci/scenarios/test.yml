@@ -1,0 +1,27 @@
+parameters:
+  min_rust_supported: 1.31  # First version of Rust 2018 edition
+
+jobs:
+# Cargo test min rust version
+- template: ../jobs/cargo-test.yaml
+  parameters:
+    job_name: cargo_test_min_ver
+    job_displayName: Test min supported version
+    test-flags: 
+      nocapture: true
+    rust: ${{ parameters['min_rust_supported'] }}
+
+# Cargo test last stable version of rust
+- template: ../jobs/cargo-test.yaml
+  parameters:
+    test-flags:
+      nocapture: true
+
+- template: ../jobs/cargo-test.yaml
+  parameters:
+    rust: nightly
+    job_name: cargo_test_nightly
+    job_displayName: Cargo test (nightly)
+    job_continueOnError: true
+    test-flags: 
+      nocapture: true

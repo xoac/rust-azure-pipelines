@@ -1,0 +1,44 @@
+parameters:
+  gitHubConnection: ""                      # Enter the service connection name for your GitHub connection. More: https://aka.ms/AA3am5s
+
+  job_condition: false                      # Default is false since gitHubConnection need to be set manually. Example: `and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))`
+  job_displayName: Deploy asserts to github
+  job_name: github_deploy
+
+  artifactName: target
+  assetUploadMode: replace
+  action: edit
+  isPreRelease: true
+  repositoryName: '$(Build.Repository.Name)'
+  
+jobs:
+  - job: ${{ parameters['job_name'] }}
+    displayName: ${{ parameters['job_displayName'] }}
+    condition: ${{ parameters['job_condition'] }}
+    steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: ${{ parameters['artifactName'] }}
+          targetPath: "$(Pipeline.Workspace)/${{parameters['artifactName']}}"
+      - bash: |
+          MY_TAG="$(Build.SourceBranch)"
+          MY_TAG=${MY_TAG#refs/tags/}
+          echo $MY_TAG
+          echo "##vso[task.setvariable variable=build.my_tag]$MY_TAG"
+          DATE="$(date +%Y-%m-%d)"
+          echo "##vso[task.setvariable variable=build.date]$DATE"
+        displayName: "Create date and tag variables"
+
+      - task: GitHubRelease@0
+        displayName: "GithubRelease@0 '$(build.my_tag) - $(build.date)'"
+        inputs:
+            gitHubConnection: PipelinesTemplates
+            tagSource: manual
+            title: '$(build.my_tag) - $(build.date)'
+            tag: '$(build.my_tag)'
+            assetUploadMode: ${{ parameters['assetUploadMode'] }}
+            action: ${{ parameters['action'] }}
+            assets: "$(Pipeline.Workspace)/${{parameters['artifactName']}}/*"  # target is the same what artifactName in download step
+            repositoryName: ${{ parameters['repositoryName'] }}
+            isPreRelease: ${{ parameters['isPreRelease'] }}
+

@@ -1,0 +1,35 @@
+# This step help publish targets folder
+parameters:
+  contents: |
+    **
+    !**/.fingerprint/**
+    !**/deps/**
+    !**/*.rlib
+    !**/*.d
+    !**/.*
+    !.*
+  sourceFolder: "$(Build.SourcesDirectory)/target/"
+  artifactName: target
+  archiveName: "$(Build.Repository.Name)"
+  archiveType: zip
+
+steps:
+  - task: CopyFiles@2
+    displayName: "Copy files to $(Build.BinariesDirectory)"
+    inputs:
+      sourceFolder: ${{ parameters['sourceFolder'] }}
+      contents: ${{ parameters['contents'] }}
+      targetFolder: "$(Build.BinariesDirectory)"
+  - ${{ if parameters.archiveType }}:
+    - task: ArchiveFiles@2
+      displayName: Archive files
+      inputs:
+        rootFolderOrFile: "$(Build.BinariesDirectory)"
+        archiveType: ${{ parameters['archiveType'] }}
+        tarCompression: none
+        archiveFile: "$(Build.ArtifactStagingDirectory)/${{ parameters['archiveName'] }}.zip"
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish: $(Build.ArtifactStagingDirectory)"
+    inputs:
+      artifactName: ${{ parameters['artifactName'] }}
+
