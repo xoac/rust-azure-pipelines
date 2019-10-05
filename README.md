@@ -1,23 +1,24 @@
-master [![Build Status](https://dev.azure.com/sylwesterrapala/azure-piplines/_apis/build/status/xoac.rust-azure-pipelines?branchName=master)](https://dev.azure.com/sylwesterrapala/azure-piplines/_build/latest?definitionId=3&branchName=master)
-develop [![Build Status](https://dev.azure.com/sylwesterrapala/azure-piplines/_apis/build/status/xoac.rust-azure-pipelines?branchName=develop)](https://dev.azure.com/sylwesterrapala/azure-piplines/_build/latest?definitionId=3&branchName=develop)
+master: [![Build Status](https://dev.azure.com/sylwesterrapala/azure-piplines/_apis/build/status/xoac.rust-azure-pipelines?branchName=master)](https://dev.azure.com/sylwesterrapala/azure-piplines/_build/latest?definitionId=3&branchName=master)  
+
+develop: [![Build Status](https://dev.azure.com/sylwesterrapala/azure-piplines/_apis/build/status/xoac.rust-azure-pipelines?branchName=develop)](https://dev.azure.com/sylwesterrapala/azure-piplines/_build/latest?definitionId=3&branchName=develop)
 
 # The idea
 
 The idea of using this CI/CD is create common templates for rust users. It should be ready to work in 5min with good default values. It allow you:
  - check and tests:
-   - on Windows, Linux, MacOs nativlye and with quemu for other targets
-   - nightly, stable and minimal suportted version
+   - on Windows, Linux, MacOs natively and with quemu for other targets
+   - with any rust version you want (nightly, stable, 1.31 etc)
  - check formatting 
  - use lints (cargo clippy)
- - deploys
+ - deploys to github (documentation and binaries)
 
 ## Copy past examples:
 
-If you just started using azure piplines you can copy paste into `azure-pipelines.yml`. **Check and test** should be good default one
+If you just started using azure pipelines you can copy paste into `azure-pipelines.yml`. **Check and test** should be good default one
 
 
 #### Check and test
-This is the default and should be enought
+This is the default and should be sufficiently. [How to create endpoint?](https://github.com/xoac/rust-azure-pipelines/tree/develop#how-to-use-run-azure-pipelines)
 ```
 trigger:
   branches:
@@ -30,9 +31,8 @@ resources:
     - repository: rust_pipelines
       type: github
       name: xoac/rust-azure-pipelines
-      ref: refs/tags/v0.1.0-alpha.2
-      #ref: refs/head/develop ## TODO you may want to change it to refs/tags/TAG_NAME.
-      endpoint: PipelinesTemplates
+      ref: refs/tags/v0.1.0
+      endpoint: PipelinesTemplates # TODO YOU NEED TO CHANGE THIS!
 
 stages:
 - stage: check
@@ -48,12 +48,18 @@ stages:
       min_rust_supported: 1.31  # Use first rust version you wanna support
 ```
 
+**You are done! Everything else is optional!**
+
 ### More stages:
 
-#### Embeeded check and tests
-Modify parameters `checks` and `tests`. This step use [cross project](https://github.com/rust-embedded/cross)
+#### Check and tests for embedded
+<details>
+Just modify `checks` and `tests`. This step use [cross project](https://github.com/rust-embedded/cross)
 
+Check supported targets.
 [Supported targets](https://github.com/rust-embedded/cross#supported-targets)
+
+the name parameter is because we can't change automatically the name `mips-unknow-linux-musl` to `mips_unknow_linux_musl`. Name has to be unique in embedded stage.
 
 ```
 # This stage allow to easy test your crate using cross project. 
@@ -74,19 +80,21 @@ Modify parameters `checks` and `tests`. This step use [cross project](https://gi
         - target: i686-unknown-linux-gnu
           name: cross_test_i686_unknown_linux_gnu
 ```
+</details>
 
 #### Build and deploy to github
-Parameter gitHubConnection need to be changed. [More info](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops#prerequisites)
+<details>
+Parameter `gitHubConnection` need to be changed. [More info](https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops#prerequisites)
 
 ```
-# This stage build binarries - you can deploy them in next stage
+# This stage build binaries - you can deploy them in next stage
 - stage: build
   displayName: "Builds"
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
   dependsOn:
     - test
 
-# Deploy binaries to github only if tags starst with `v` for example `v0.1.5`
+# Deploy binaries to github only if tags start with `v` for example `v0.1.5`
 - stage: deploy
   displayName: "Deploys"
   dependsOn:
@@ -97,6 +105,7 @@ Parameter gitHubConnection need to be changed. [More info](https://docs.microsof
       job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
       gitHubConnection: PipelinesTemplates # CHANGED THIS TO YOUR OWN VALUE
 ```
+</details>
 
 ## Add this repo templates to your project:
 If you already have `azure-piplines.yml` file add this to be able using templates:
@@ -106,8 +115,8 @@ resources:
     - repository: rust_pipelines
       type: github
       name: xoac/rust-azure-pipelines
-      ref: refs/head/master ## TODO you may want to change it to refs/tags/TAG_NAME.
-      # ref: refs/tags/v0.1.0  << this will guarantee nothing will be changed :)
+      # ref: refs/heads/master ## TODO you may want to change it to refs/tags/TAG_NAME.
+      ref: refs/tags/v0.1.0
       endpoint: YOU_NEED_TO_SET_THIS
 ```
 More about [templates resources](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops#using-other-repositories)
@@ -117,8 +126,34 @@ And now you can use it like this:
 jobs:
   - template: ci/jobs/cargo-check.yml@rust_pipelines
 ```
+Available items:
+```
+ci
+├── jobs
+│   ├── cargo-build.yml
+│   ├── cargo-check.yml
+│   ├── cargo-clippy.yml
+│   ├── cargo-doc.yml
+│   ├── cargo-test.yaml
+│   ├── cross-build.yml
+│   ├── cross-check.yml
+│   ├── cross-test.yml
+│   └── rustfmt.yml
+├── scenarios
+│   ├── builds.yml
+│   ├── check.yml
+│   ├── embeeded.yml
+│   ├── github
+│   │   ├── deploy-doc.yml
+│   │   └── release.yml
+│   └── test.yml
+└── steps
+    ├── artifacts.yml
+    ├── install-cross-rust.yml
+    └── install-rust.yml
+```
 
-For usage examples see `ci/scenarios`
+You can see `ci/scenarios` to get know how to use jobs.
 
 ### Intuitive:
 
@@ -149,8 +184,6 @@ How to check for more parameters? You can use just `--help` flag in cargo or see
 cargo build --help
 ```
 
-
-
 ### How to use run azure-pipelines?
 1. Create `azure-pipelines.yml` in your reposiotry
 2. Specify [service connection](https://docs.microsoft.com/pl-pl/azure/devops/pipelines/library/service-endpoints?view=azure-devops)
@@ -160,12 +193,13 @@ cargo build --help
 ### How to deploy doc to github pages? 
 This is useful if u want to have a separate documentation for master branch.
 
+<details>
+
 #### Github part
 1. First you need to create a PAT (Personal Access Token) on Github. (recommended scopes for the token: `repo`, `user`, `admin:repo_hook`.)
 2. Then create a branch `gh-pages` and us it as repo page. [Here you find how to do it](https://help.github.com/en/articles/configuring-a-publishing-source-for-github-pages#enabling-github-pages-to-publish-your-site-from-master-or-gh-pages)
 
 #### Azure part
-
 1. Go to your azure dev-ops pipeline project and click edit.  
 ![](img/doc_deploy1.png)  
 2. Go inside variables:  
@@ -177,22 +211,7 @@ This is useful if u want to have a separate documentation for master branch.
 Example master doc generated for this example create.
 [master doc for this hello word app](https://xoac.github.io/rust-azure-pipelines/doc/rust_azure_pipelines/)
 
-### I have own `azure-pipelines.yml` and just wanna use one template. How?
-It's simple. You just need this resources in your `azure-pipelines.yml`:
-```
-resources:
-  repositories:
-    - repository: templates
-      type: github
-      name: xoac/rust-azure-pipelines
-      ref: refs/heads/master  # You can also specify tag refs/tags/v0.0.1
-      endpoint: PipelinesTemplates
-```
-
-and now you can use all templates from `ci` folder like this `ci/TEMPLATE_NAME@templates` for [example](https://github.com/xoac/rust-azure-pipelines/blob/688c24b239cc7b4d4b5c89dbee321df468cf3825/azure-pipelines.yml#L19)
-
-master branch can change. If u don't want it use some tag changin `ref` to `refs/tags/TAG`.
-
+</details>
 
 ----
 
