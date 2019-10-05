@@ -1,7 +1,7 @@
 parameters:
   # azure pipelines paramters
   job_name: cargo_clippy            # Default job name
-  job_displayName: Cargo clipp      # Default displayName
+  job_displayName: Cargo clippy     # Default displayName
   job_dependsOn: []                 # Dependencies to for the job to start
   job_condition: true               # Job condition
   job_post-steps: []                # Custom steps running after job

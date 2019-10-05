@@ -10,17 +10,17 @@ resources:
       type: github
       name: xoac/rust-azure-pipelines
       # ref: refs/tags/v0.1.0-alpha.2
-      ref: refs/heads/develop ## TODO you may want to change it to refs/tags/TAG_NAME.
-      endpoint: PipelinesTemplates
+      ref: refs/heads/develop # TODO you may want to change it to refs/tags/TAG_NAME.
+      endpoint: PipelinesTemplates # TODO YOU NEED TO CHANGE THIS!
 
 stages: 
 - stage: check
   displayName: "Quick checks"
   jobs:
   - template: ci/scenarios/check.yml@rust_pipelines
-    parameters:
+    parameters: # You can make conditions here.
       cargo-check: true
-      cargo-check-nigtly: true
+      cargo-check-nigtly: true # this can fail and stage check still succeed
       cargo-clippy: true
       rustfmt: true
 
@@ -49,7 +49,7 @@ stages:
         - target: i686-unknown-linux-gnu
           name: cross_test_i686_unknown_linux_gnu
 
-# This stage build binarries - you can deploy them in next stage
+# This stage build binaries - you can deploy them in next stage
 - stage: build
   displayName: "Builds"
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
@@ -61,6 +61,7 @@ stages:
     parameters:
       artifactName: target
 
+# This stage will be create github realese and upload binaries from build stage. It will also generate documentaion for master and upload it to gh-pages.
 - stage: deploy
   displayName: "Deploys"
   dependsOn:
@@ -69,14 +70,15 @@ stages:
   # Deploy doc
   - template: ci/scenarios/github/deploy-doc.yml@rust_pipelines
     parameters:
-     branch: develop
+     branch: master
      job_name: github_deploy_doc
-     github:
+     github: # TODO You need modify this parameters to deploy doc
       user: xoac
       email: sylwesterrapala@outlook.com
       repo: https://github.com/xoac/rust-azure-pipelines/
  
+  # Create releases deploy binaries
   - template: ci/scenarios/github/release.yml@rust_pipelines
     parameters:
       job_condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
-      gitHubConnection: PipelinesTemplates 
+      gitHubConnection: PipelinesTemplates # TODO This connection need write access to your repo! https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
