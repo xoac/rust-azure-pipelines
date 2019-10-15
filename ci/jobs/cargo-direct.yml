@@ -7,7 +7,8 @@ parameters:
   job_continueOnError: false        # Should other job still run even if this fail
   job_post-steps: []                # Custom steps running after job
 
-  job: {}
+  job:
+    name: cargo_check
 
   # global parameters
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
@@ -15,9 +16,8 @@ parameters:
   direct-call: "--help"
 
 jobs:
-  - job: cargo_check
-    displayName: Cargo check
-    condition: false
+  - job: coalesce(${{ parameters.job['name'] }}, "cargo_check")
+    displayName: coalesce(${{ parameters.job['displayName'] }}, "Cargo check")
     ${{ insert }}: ${{ parameters.job }}
     pool:
       vmImage: ubuntu-16.04
