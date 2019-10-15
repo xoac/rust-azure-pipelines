@@ -26,6 +26,7 @@ stages:
   - template: ci/jobs/cargo-direct.yml@rust_pipelines
     parameters:
       job:
+        name: a
         condition: true
         displayName: OverwriteName
         continueOnError: true

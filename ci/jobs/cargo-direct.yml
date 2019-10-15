@@ -1,14 +1,10 @@
 parameters:
-  # azure pipelines paramters
-  job_name: cargo_check             # Default job name
-  job_displayName: Cargo check      # Default displayName
-  job_dependsOn: []                 # Dependencies to for the job to start
-  job_condition: true               # Job condition
-  job_continueOnError: false        # Should other job still run even if this fail
-  job_post-steps: []                # Custom steps running after job
-
-  job:
-    name: cargo_check
+  job:                        # Job control parameters 
+    name: cargo_check         # Job name
+    pre-steps: []             # pre-steps are  called after job steps
+    post-steps: []            # post-steps are called before job steps
+    # all other job prameters excluding `steps` are supported.
+    # Link: https://docs.microsoft.com/en-us/azure/devops/pipelines/process/phases?view=azure-devops&tabs=yaml#specifying-jobs
 
   # global parameters
   rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
@@ -16,23 +12,24 @@ parameters:
   direct-call: "--help"
 
 jobs:
-  - job: coalesce(${{ parameters.job['name'] }}, "cargo_check")
-    displayName: coalesce(${{ parameters.job['displayName'] }}, "Cargo check")
-    ${{ insert }}: ${{ parameters.job }}
-    pool:
-      vmImage: ubuntu-16.04
-    variables:
-      check_flags: ''
-    steps:
-    - template: ../steps/install-rust.yml
-      parameters:
-        rustup_toolchain: ${{ parameters['rust'] }}
+  - job: ${{ coalesce(parameters.job['name'], 'cargo_check') }}
+    displayName: ${{ coalesce(parameters.job['displayName'], 'Cargo called directly') }}
+    ${{ if parameters.job['pool'] }}:
+      pool: ${{ parameters.job['pool'] }}
+    ${{ if not(parameters.job['pool']) }}:
+      pool:
+        vmImage: ubuntu-16.04
+    ${{ each item in parameters['job'] }}:
+      ${{ if notIn(item.key, 'name', 'displayName', 'pool') }}:
+        ${{ item.key }}: ${{item.value}}
 
-    # Final run
+    steps:
+    - ${{ if parameters.job['pre-steps'] }}:
+      - ${{parameters.job['pre-steps'] }}
+
     - script: cargo ${{ parameters['direct-call'] }}
       displayName: Call cargo direct
 
-    # Custom steps:
-    - ${{ if parameters['job_post-steps'] }}:
-      - ${{ parameters['job_post-steps'] }}
+    - ${{ if parameters.job['post-steps'] }}:
+      - ${{ parameters.job['post-steps'] }}
 
