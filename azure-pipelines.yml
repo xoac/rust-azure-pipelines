@@ -23,6 +23,12 @@ stages:
       cargo-check-nigtly: true # this can fail and stage check still succeed
       cargo-clippy: true
       rustfmt: true
+  - template: ci/jobs/cargo-direct.yml@rust_pipelines
+    parameters:
+      job:
+        condition: true
+        displayName: OverwriteName
+        continueOnError: true
 
 - stage: test
   displayName: "Multi OS native tests"

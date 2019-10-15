@@ -37,7 +37,6 @@ jobs:
     job_condition: ${{ parameters['cargo-clippy'] }}
     all: true
     job_continueOnError: true
-    all: true
     deny:
       - warnings
 

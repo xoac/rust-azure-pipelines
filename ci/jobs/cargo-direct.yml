@@ -1,0 +1,38 @@
+parameters:
+  # azure pipelines paramters
+  job_name: cargo_check             # Default job name
+  job_displayName: Cargo check      # Default displayName
+  job_dependsOn: []                 # Dependencies to for the job to start
+  job_condition: true               # Job condition
+  job_continueOnError: false        # Should other job still run even if this fail
+  job_post-steps: []                # Custom steps running after job
+
+  job: {}
+
+  # global parameters
+  rust: stable                # Version of rust. Could be [stable, beta, nightly, 1.31, nightly-2018-08-01 ... ]
+
+  direct-call: "--help"
+
+jobs:
+  - job: cargo_check
+    displayName: Cargo check
+    condition: false
+    ${{ insert }}: ${{ parameters.job }}
+    pool:
+      vmImage: ubuntu-16.04
+    variables:
+      check_flags: ''
+    steps:
+    - template: ../steps/install-rust.yml
+      parameters:
+        rustup_toolchain: ${{ parameters['rust'] }}
+
+    # Final run
+    - script: cargo ${{ parameters['direct-call'] }}
+      displayName: Call cargo direct
+
+    # Custom steps:
+    - ${{ if parameters['job_post-steps'] }}:
+      - ${{ parameters['job_post-steps'] }}
+
