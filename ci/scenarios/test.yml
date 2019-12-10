@@ -7,14 +7,14 @@ jobs:
   parameters:
     job_name: cargo_test_min_ver
     job_displayName: Test min supported version
-    test-flags: 
+    test_flags: 
       nocapture: true
     rust: ${{ parameters['min_rust_supported'] }}
 
 # Cargo test last stable version of rust
 - template: ../jobs/cargo-test.yaml
   parameters:
-    test-flags:
+    test_flags:
       nocapture: true
 
 - template: ../jobs/cargo-test.yaml
@@ -23,5 +23,5 @@ jobs:
     job_name: cargo_test_nightly
     job_displayName: Cargo test (nightly)
     job_continueOnError: true
-    test-flags: 
+    test_flags: 
       nocapture: true
