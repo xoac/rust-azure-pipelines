@@ -32,7 +32,7 @@ jobs:
       - task: GitHubRelease@0
         displayName: "GithubRelease@0 '$(build.my_tag) - $(build.date)'"
         inputs:
-            gitHubConnection: PipelinesTemplates
+            gitHubConnection: ${{ parameters['githubConnection'] }}
             tagSource: manual
             title: '$(build.my_tag) - $(build.date)'
             tag: '$(build.my_tag)'
