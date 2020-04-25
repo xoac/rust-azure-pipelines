@@ -63,7 +63,7 @@ jobs:
   steps:
   - template: ../steps/install-rust.yml
     parameters:
-      rust_toolchain: ${{ parameters.rust }}
+      rustup_toolchain: ${{ parameters.rust }}
 
   # *********************************************************************************************
   # parameters from libtest `cargo test -- --help`
