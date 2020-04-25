@@ -1,5 +1,5 @@
 parameters:
-  min_rust_supported: 1.31  # First version of Rust 2018 edition
+  min_rust_supported: 1.31.1  # First version of Rust 2018 edition
 
 jobs:
 # Cargo test min rust version
