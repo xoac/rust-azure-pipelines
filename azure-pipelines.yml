@@ -29,7 +29,7 @@ stages:
   jobs:
   - template: ci/scenarios/test.yml@rust_pipelines
     parameters:
-      min_rust_supported: 1.31
+      min_rust_supported: 1.31.1 # this is default setting for test
 
 # This stage allow to easy test your crate using cross project. 
 # Supported targets: https://github.com/rust-embedded/cross#supported-targets
