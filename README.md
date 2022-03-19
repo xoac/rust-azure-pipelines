@@ -2,6 +2,10 @@ master: [![Build Status](https://dev.azure.com/sylwesterrapala/azure-piplines/_a
 
 develop: [![Build Status](https://dev.azure.com/sylwesterrapala/azure-piplines/_apis/build/status/xoac.rust-azure-pipelines?branchName=develop)](https://dev.azure.com/sylwesterrapala/azure-piplines/_build/latest?definitionId=3&branchName=develop)
 
+# Status
+
+This project is no longer maintained. I recommended using github actions for CI/CD with github I work on my personal template that contains a good defaults for github-actions at [xoac/opinionated-rust-template](https://github.com/xoac/opinionated-rust-template) if you still looking for Azure Pipelines for rust [crates-ci/azure-pipelines](https://github.com/crate-ci/azure-pipelines) should be a correct place.
+
 # The idea
 
 The idea of using this CI/CD is create common templates for rust users. It should be ready to work in 5min with good default values. It allow you:
